@@ -1,551 +1,1055 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QuantGoal | Elite 12 Ligas</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        :root {
-            --bg: #070c15; --card: rgba(15, 23, 42, 0.85); --border: #1e293b; --border-hi: #334155;
-            --fg: #f1f5f9; --muted: #64748b; --accent: #10b981; --accent2: #34d399;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: var(--bg); color: var(--fg); font-family: 'Space Grotesk', sans-serif; overflow-x: hidden; min-height: 100vh; }
-        body::before { content: ''; position: fixed; top: -30%; left: -10%; width: 60%; height: 60%; background: radial-gradient(circle, rgba(16,185,129,0.06) 0%, transparent 70%); pointer-events: none; z-index: 0; }
-        body::after { content: ''; position: fixed; bottom: -20%; right: -15%; width: 50%; height: 50%; background: radial-gradient(circle, rgba(245,158,11,0.04) 0%, transparent 70%); pointer-events: none; z-index: 0; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#05070f" />
+<title>LinguaVox — Tradutor Universal</title>
+<style>
+  :root{
+    --bg:#05070f;
+    --text:#eef2ff;
+    --muted:#8b93b8;
+    --muted-2:#5d6485;
+    --border:rgba(255,255,255,.08);
+    --border-2:rgba(255,255,255,.16);
+    --panel:rgba(255,255,255,.03);
+    --accent:#5b8cff;
+    --cyan:#22d3ee;
+    --violet:#a855f7;
+    --ok:#34d399;
+    --warn:#fbbf24;
+    --err:#fb7185;
+    --r-lg:26px;
+    --r-md:16px;
+    --r-sm:12px;
+  }
 
-        .glass { background: var(--card); backdrop-filter: blur(16px); border: 1px solid var(--border); }
-        .mono { font-family: 'JetBrains Mono', monospace; }
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{min-height:100%}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    overflow-x:hidden;
+    min-height:100dvh;
+  }
 
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+  /* ---------- Fundo animado ---------- */
+  .bg-fx{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+  .bg-fx::after{
+    content:"";position:absolute;inset:0;
+    background:
+      radial-gradient(900px 520px at 50% -12%, rgba(99,102,241,.30), transparent 65%),
+      radial-gradient(680px 420px at 3% 8%,  rgba(34,211,238,.14), transparent 62%),
+      radial-gradient(720px 480px at 97% 22%, rgba(168,85,247,.16), transparent 62%);
+  }
+  .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.45;animation:float 20s ease-in-out infinite}
+  .blob-a{width:min(46vw,460px);aspect-ratio:1;left:-8%;top:-6%;background:#2563eb}
+  .blob-b{width:min(40vw,400px);aspect-ratio:1;right:-6%;top:16%;background:#7c3aed;animation-delay:-9s}
+  @keyframes float{
+    0%,100%{transform:translate3d(0,0,0) scale(1)}
+    50%{transform:translate3d(0,34px,0) scale(1.08)}
+  }
 
-        .league-scroll { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0; scrollbar-width: none; }
-        .league-scroll::-webkit-scrollbar { display: none; }
-        .league-chip { flex-shrink: 0; padding: 8px 14px; border-radius: 10px; font-size: 11px; font-weight: 600; border: 1px solid var(--border); background: rgba(15,23,42,0.6); cursor: pointer; transition: all 0.25s ease; display: flex; align-items: center; gap: 6px; white-space: nowrap; text-transform: uppercase; color: var(--muted); }
-        .league-chip:hover { border-color: var(--border-hi); color: var(--fg); transform: translateY(-1px); }
-        .league-chip.active { border-color: var(--accent); color: var(--accent2); background: rgba(16,185,129,0.08); box-shadow: 0 0 20px rgba(16,185,129,0.15); }
-        
-        .input-field { background: #020617; border: 1px solid #334155; color: white; transition: all 0.3s ease; font-size: 13px; width: 100%; padding: 12px 16px; border-radius: 10px; outline: none; }
-        .input-field:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(16,185,129,0.15); }
-        .input-field:disabled { opacity: 0.4; cursor: not-allowed; }
-        .input-mini { background: #020617; border: 1px solid #1e293b; color: white; text-align: center; font-size: 12px; padding: 6px 4px; border-radius: 6px; outline: none; width: 100%; font-family: monospace; }
-        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+  /* ---------- Layout ---------- */
+  .app{
+    position:relative;z-index:1;
+    width:100%;max-width:1040px;margin:0 auto;
+    padding:clamp(20px,4.5vw,46px) clamp(14px,4vw,28px) 56px;
+    padding-bottom:calc(56px + env(safe-area-inset-bottom,0px));
+  }
 
-        .autocomplete-wrap { position: relative; }
-        .autocomplete-dropdown { position: absolute; top: 100%; left: 0; right: 0; z-index: 50; background: #0c1222; border: 1px solid #1e293b; border-top: none; border-radius: 0 0 10px 10px; max-height: 240px; overflow-y: auto; display: none; box-shadow: 0 12px 32px rgba(0,0,0,0.5); }
-        .autocomplete-dropdown.open { display: block; animation: dropIn 0.2s ease; }
-        @keyframes dropIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
-        .ac-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; border-bottom: 1px solid rgba(30,41,59,0.5); color: #e2e8f0; font-size: 13px; font-weight: 600; }
-        .ac-item:hover { background: rgba(16,185,129,0.08); color: var(--accent2); }
+  /* ---------- Hero ---------- */
+  .hero{text-align:center;margin-bottom:clamp(20px,4vw,34px)}
+  .badge{
+    display:inline-flex;align-items:center;gap:7px;
+    padding:6px 14px;border-radius:999px;
+    font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+    color:#a5b4fc;
+    background:rgba(99,102,241,.12);
+    border:1px solid rgba(129,140,248,.28);
+    margin-bottom:16px;
+  }
+  .badge span{color:var(--cyan);font-size:13px;line-height:1}
+  .hero h1{
+    margin:0;
+    font-size:clamp(30px,7vw,48px);
+    font-weight:800;
+    letter-spacing:-.035em;
+    line-height:1.05;
+    background:linear-gradient(100deg,#7dd3fc 0%,#818cf8 42%,#c084fc 78%,#f0abfc 100%);
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;color:transparent;
+    filter:drop-shadow(0 6px 28px rgba(99,102,241,.45));
+  }
+  .tagline{
+    margin:12px auto 0;max-width:520px;
+    font-size:clamp(13px,2.6vw,15px);line-height:1.6;color:var(--muted);
+  }
+  .tagline strong{color:#c7d2fe;font-weight:600}
 
-        .grid-t { display: grid; grid-template-columns: 2.2fr 1fr 1fr; gap: 6px; align-items: center; margin-bottom: 6px; }
-        
-        .btn-calc { transition: all 0.2s ease; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; padding: 12px 8px; border-radius: 10px; border: 1px solid; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
-        .btn-calc:hover { transform: translateY(-2px); filter: brightness(1.2); }
-        .btn-calc:active { transform: translateY(0); }
+  /* ---------- Card ---------- */
+  .card{
+    border-radius:var(--r-lg);
+    padding:1px;
+    background:linear-gradient(140deg,
+      rgba(91,140,255,.55) 0%,
+      rgba(168,85,247,.38) 38%,
+      rgba(34,211,238,.22) 72%,
+      rgba(255,255,255,.07) 100%);
+    box-shadow:
+      0 30px 70px -30px rgba(0,0,0,.95),
+      0 0 90px -30px rgba(99,102,241,.45);
+  }
+  .card-inner{
+    border-radius:calc(var(--r-lg) - 1px);
+    padding:clamp(14px,3.2vw,24px);
+    background:
+      radial-gradient(700px 300px at 50% 0%, rgba(99,102,241,.10), transparent 70%),
+      #0a0d1b;
+    border:1px solid rgba(255,255,255,.035);
+  }
 
-        .team-selected { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.2); border-radius: 10px; font-size: 13px; font-weight: 600; color: white; }
-        .ts-clear { color: #ef4444; cursor: pointer; padding: 4px; font-weight: bold; }
-        
-        .pulse-border { animation: pB 1.5s infinite; }
-        @keyframes pB { 0%,100% { border-color: var(--accent); box-shadow: 0 0 5px rgba(16,185,129,0.15); } 50% { border-color: var(--accent2); box-shadow: 0 0 15px rgba(52,211,153,0.4); } }
-    </style>
+  /* ---------- Barra de idiomas ---------- */
+  .langbar{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+    gap:clamp(8px,2vw,12px);
+    align-items:center;
+  }
+
+  .select{position:relative;min-width:0}
+  .select-btn{
+    width:100%;display:flex;align-items:center;gap:8px;
+    height:clamp(46px,11vw,52px);
+    padding:0 clamp(10px,2.5vw,14px);
+    border-radius:var(--r-md);
+    background:rgba(255,255,255,.045);
+    border:1px solid var(--border);
+    color:var(--text);
+    font-size:clamp(13px,3.3vw,14.5px);
+    font-weight:500;
+    cursor:pointer;
+    transition:background .18s, border-color .18s, box-shadow .18s;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .select-btn:hover{background:rgba(255,255,255,.075);border-color:var(--border-2)}
+  .select-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .select.is-open .select-btn{
+    border-color:rgba(91,140,255,.65);
+    box-shadow:0 0 0 3px rgba(91,140,255,.16);
+  }
+  .s-flag{font-size:16px;line-height:1;flex-shrink:0}
+  .s-name{flex:1;min-width:0;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .s-caret{width:16px;height:16px;flex-shrink:0;color:var(--accent);transition:transform .2s}
+  .select.is-open .s-caret{transform:rotate(180deg)}
+
+  .select-menu{
+    position:absolute;z-index:50;left:0;right:0;
+    top:calc(100% + 8px);
+    max-height:min(288px,50dvh);
+    overflow-y:auto;overscroll-behavior:contain;
+    padding:6px;
+    border-radius:var(--r-md);
+    background:rgba(16,20,38,.96);
+    backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+    border:1px solid rgba(255,255,255,.12);
+    box-shadow:0 26px 60px -12px rgba(0,0,0,.9);
+    opacity:0;visibility:hidden;transform:translateY(-6px);
+    transition:opacity .16s ease, transform .16s ease, visibility .16s;
+  }
+  .select.is-open .select-menu{opacity:1;visibility:visible;transform:translateY(0)}
+  .select-menu::-webkit-scrollbar{width:6px}
+  .select-menu::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:99px}
+  .select-menu::-webkit-scrollbar-track{background:transparent}
+
+  .select-item{
+    display:flex;align-items:center;gap:10px;width:100%;
+    padding:10px 12px;border:0;border-radius:10px;
+    background:transparent;color:#c3c9e4;
+    font-size:14px;font-family:inherit;text-align:left;cursor:pointer;
+    transition:background .13s, color .13s;
+  }
+  .select-item:hover{background:rgba(255,255,255,.07);color:#fff}
+  .select-item.is-active{background:rgba(91,140,255,.16);color:#fff;font-weight:600}
+  .i-flag{font-size:15px;line-height:1}
+  .i-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .i-code{font-size:10.5px;font-weight:700;letter-spacing:.08em;color:var(--muted-2)}
+  .select-item.is-active .i-code{color:#93b4ff}
+
+  .swap{
+    width:clamp(44px,11vw,50px);height:clamp(44px,11vw,50px);
+    flex-shrink:0;display:grid;place-items:center;
+    border:0;border-radius:50%;
+    background:linear-gradient(150deg,#3b82f6,#6366f1 60%,#8b5cf6);
+    color:#fff;cursor:pointer;
+    box-shadow:0 8px 24px -8px rgba(99,102,241,.95),inset 0 1px 0 rgba(255,255,255,.32);
+    transition:transform .2s, box-shadow .2s, filter .2s;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .swap svg{width:19px;height:19px;transition:transform .35s ease}
+  .swap:hover{filter:brightness(1.12);box-shadow:0 12px 30px -8px rgba(99,102,241,1),inset 0 1px 0 rgba(255,255,255,.32)}
+  .swap:hover svg{transform:rotate(180deg)}
+  .swap:active{transform:scale(.94)}
+  .swap:focus-visible{outline:2px solid #fff;outline-offset:3px}
+
+  /* ---------- Painéis ---------- */
+  .panels{
+    display:grid;grid-template-columns:1fr;
+    gap:clamp(10px,2.2vw,14px);
+    margin-top:clamp(12px,2.6vw,18px);
+  }
+  @media(min-width:800px){
+    .panels{grid-template-columns:1fr 1fr}
+  }
+
+  .panel{
+    position:relative;
+    display:flex;flex-direction:column;
+    padding:clamp(12px,2.6vw,16px);
+    border-radius:18px;
+    background:var(--panel);
+    border:1px solid var(--border);
+    transition:border-color .2s, background .2s;
+  }
+  .panel:focus-within{border-color:rgba(91,140,255,.45);background:rgba(91,140,255,.045)}
+  .panel::before{
+    content:"";position:absolute;inset:0 0 auto 0;height:1px;
+    background:linear-gradient(90deg,transparent,rgba(34,211,238,.55),transparent);
+    opacity:.85;pointer-events:none;
+  }
+  .panel-out::before{background:linear-gradient(90deg,transparent,rgba(168,85,247,.6),transparent)}
+
+  .panel-top{
+    display:flex;align-items:center;justify-content:space-between;gap:8px;
+    margin-bottom:10px;
+  }
+  .panel-label{
+    display:inline-flex;align-items:center;gap:7px;
+    font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--cyan);
+  }
+  .panel-out .panel-label{color:#c4b5fd}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+  .panel-out .dot{background:#c4b5fd;box-shadow:0 0 10px #c4b5fd}
+
+  .chip{
+    font-size:11px;font-weight:600;color:var(--muted);
+    padding:4px 10px;border-radius:999px;
+    background:rgba(255,255,255,.05);
+    border:1px solid var(--border);
+    max-width:52%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+
+  .panel textarea{
+    flex:1;
+    width:100%;
+    min-height:clamp(118px,20vh,168px);
+    padding:0;margin:0;
+    background:transparent;border:0;outline:none;resize:none;
+    color:var(--text);
+    font-family:inherit;
+    font-size:16px;line-height:1.55;
+    caret-color:var(--accent);
+  }
+  .panel textarea::placeholder{color:#4d5478}
+  .panel textarea[readonly]{color:#e6ebff}
+
+  .toolbar{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+  .chip-btn{
+    display:inline-flex;align-items:center;gap:6px;
+    height:34px;padding:0 12px;
+    border-radius:999px;
+    background:rgba(255,255,255,.05);
+    border:1px solid var(--border);
+    color:#c3c9e4;
+    font-family:inherit;font-size:12.5px;font-weight:500;
+    white-space:nowrap;cursor:pointer;
+    transition:background .16s, border-color .16s, color .16s, transform .12s;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .chip-btn svg{width:14px;height:14px;flex-shrink:0}
+  .chip-btn:hover{background:rgba(255,255,255,.1);border-color:var(--border-2);color:#fff}
+  .chip-btn:active{transform:scale(.96)}
+  .chip-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .chip-btn.is-rec{
+    background:rgba(251,113,133,.16);
+    border-color:rgba(251,113,133,.5);
+    color:#fda4af;
+    animation:pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{box-shadow:0 0 0 0 rgba(251,113,133,.45)}
+    50%{box-shadow:0 0 0 7px rgba(251,113,133,0)}
+  }
+
+  .panel-foot{
+    display:flex;align-items:center;justify-content:space-between;gap:8px;
+    margin-top:10px;padding-top:9px;
+    border-top:1px solid rgba(255,255,255,.05);
+    font-size:11.5px;color:var(--muted-2);
+  }
+  .panel-foot .hint{opacity:.75}
+  .counter.is-near{color:var(--warn)}
+
+  /* ---------- Botão principal ---------- */
+  .primary{
+    position:relative;
+    width:100%;height:clamp(52px,12vw,58px);
+    margin-top:clamp(14px,3vw,18px);
+    border:0;border-radius:var(--r-md);
+    display:inline-flex;align-items:center;justify-content:center;gap:9px;
+    font-family:inherit;font-size:clamp(14px,3.4vw,15px);font-weight:700;
+    letter-spacing:.07em;text-transform:uppercase;color:#fff;
+    cursor:pointer;
+    background:linear-gradient(95deg,#3b82f6 0%,#6366f1 50%,#8b5cf6 100%);
+    background-size:180% 100%;
+    box-shadow:0 14px 34px -14px rgba(99,102,241,1),inset 0 1px 0 rgba(255,255,255,.28);
+    transition:background-position .45s ease, filter .2s, transform .12s, box-shadow .2s;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .primary svg{width:18px;height:18px}
+  .primary:hover{background-position:100% 0;box-shadow:0 18px 44px -14px rgba(99,102,241,1),inset 0 1px 0 rgba(255,255,255,.28)}
+  .primary:active{transform:scale(.99)}
+  .primary:focus-visible{outline:2px solid #fff;outline-offset:3px}
+  .primary:disabled{opacity:.62;cursor:not-allowed;transform:none}
+  .primary .spinner{
+    width:16px;height:16px;border-radius:50%;
+    border:2px solid rgba(255,255,255,.35);border-top-color:#fff;
+    animation:spin .7s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .status{
+    margin:12px 0 0;
+    min-height:18px;
+    text-align:center;
+    font-size:13px;font-weight:500;letter-spacing:.01em;
+    color:var(--muted);
+    transition:color .2s;
+  }
+  .status[data-type="ok"]{color:var(--ok)}
+  .status[data-type="busy"]{color:var(--cyan)}
+  .status[data-type="warn"]{color:var(--warn)}
+  .status[data-type="err"]{color:var(--err)}
+
+  .foot{
+    margin-top:clamp(18px,4vw,26px);
+    text-align:center;
+    font-size:11.5px;letter-spacing:.02em;
+    color:#3f4568;
+  }
+
+  /* ---------- Overlay de legenda ---------- */
+  .overlay{
+    position:fixed;inset:0;z-index:80;
+    display:flex;flex-direction:column;
+    background:radial-gradient(1200px 600px at 50% 0%, rgba(30,27,75,.9), #04060d 70%);
+    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    opacity:0;visibility:hidden;
+    transition:opacity .26s ease, visibility .26s;
+    padding:calc(env(safe-area-inset-top,0px) + 14px) 18px calc(env(safe-area-inset-bottom,0px) + 26px);
+  }
+  .overlay.is-open{opacity:1;visibility:visible}
+  .ov-top{display:flex;justify-content:flex-end;gap:10px}
+  .ov-btn{
+    display:inline-flex;align-items:center;gap:7px;
+    height:42px;padding:0 16px;
+    border-radius:12px;
+    background:rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.13);
+    color:#e8ecff;font-family:inherit;font-size:13.5px;font-weight:600;
+    cursor:pointer;transition:background .16s, transform .12s;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .ov-btn:hover{background:rgba(255,255,255,.14)}
+  .ov-btn:active{transform:scale(.96)}
+  .ov-btn svg{width:15px;height:15px}
+  .ov-body{
+    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:clamp(14px,3vw,26px);
+    width:100%;max-width:920px;margin:0 auto;text-align:center;
+  }
+  .ov-src{
+    margin:0;color:#7d86ad;
+    font-size:clamp(14px,3.4vw,21px);line-height:1.45;
+    max-width:100%;
+    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+  }
+  .ov-out{
+    margin:0;color:#fff;font-weight:800;
+    font-size:clamp(24px,6vw,54px);line-height:1.18;letter-spacing:-.02em;
+    max-width:100%;
+    overflow-wrap:anywhere;
+  }
+
+  /* ---------- Toast ---------- */
+  .toast{
+    position:fixed;left:50%;bottom:calc(26px + env(safe-area-inset-bottom,0px));
+    transform:translate(-50%,18px);
+    z-index:120;
+    padding:11px 20px;border-radius:999px;
+    background:rgba(20,24,44,.96);
+    border:1px solid rgba(255,255,255,.14);
+    color:#fff;font-size:13.5px;font-weight:600;
+    box-shadow:0 18px 40px -14px rgba(0,0,0,.95);
+    opacity:0;visibility:hidden;
+    transition:opacity .22s, transform .22s, visibility .22s;
+    pointer-events:none;
+    max-width:calc(100vw - 32px);
+    text-align:center;
+  }
+  .toast.show{opacity:1;visibility:visible;transform:translate(-50%,0)}
+
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+  }
+</style>
 </head>
-<body class="flex flex-col items-center p-3 md:p-8 relative">
+<body>
 
-    <!-- BOTÃO DO COFRE -->
-    <button onclick="toggleVault()" class="fixed top-4 left-4 z-[90] w-12 h-12 flex items-center justify-center rounded-full bg-slate-900 border border-emerald-500/50 text-emerald-400 hover:text-white hover:bg-emerald-600 transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-        <i class="fa-solid fa-lock"></i>
-    </button>
+<div class="bg-fx" aria-hidden="true">
+  <div class="blob blob-a"></div>
+  <div class="blob blob-b"></div>
+</div>
 
-    <!-- STATUS DA API -->
-    <div class="fixed top-4 right-4 z-[90] flex items-center gap-2 text-[10px] bg-slate-900 px-3 py-2 rounded-full border border-slate-700 shadow-lg">
-        <span id="api-dot" class="w-2 h-2 rounded-full bg-slate-500"></span>
-        <span id="api-status-label" class="text-slate-400 font-bold uppercase tracking-wider">Offline</span>
+<div class="app">
+  <header class="hero">
+    <div class="badge"><span>✦</span> Tradutor com voz e legenda</div>
+    <h1>LinguaVox</h1>
+    <p class="tagline">Traduza entre <strong>30 idiomas</strong> com áudio, cópia instantânea e modo legenda em tela cheia.</p>
+  </header>
+
+  <main class="card">
+    <div class="card-inner">
+
+      <div class="langbar">
+        <div id="fromSelect"></div>
+
+        <button class="swap" id="swapBtn" type="button" aria-label="Trocar idiomas" title="Trocar idiomas">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M7 4v13"/><path d="M4 14l3 3 3-3"/>
+            <path d="M17 20V7"/><path d="M14 10l3-3 3 3"/>
+          </svg>
+        </button>
+
+        <div id="toSelect"></div>
+      </div>
+
+      <div class="panels">
+
+        <!-- ORIGEM -->
+        <section class="panel">
+          <div class="panel-top">
+            <span class="panel-label"><i class="dot"></i> Origem</span>
+            <span class="chip" id="fromChip">Português</span>
+          </div>
+
+          <textarea id="src" rows="4" placeholder="Ex: Olá, como você está?"
+            aria-label="Texto de origem" autocapitalize="sentences"></textarea>
+
+          <div class="toolbar">
+            <button class="chip-btn" id="micBtn" type="button" aria-pressed="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/>
+              </svg>
+              <span id="micLabel">Falar</span>
+            </button>
+
+            <button class="chip-btn" id="speakSrcBtn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                <path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/>
+              </svg>
+              Ouvir
+            </button>
+
+            <button class="chip-btn" id="clearBtn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+              Limpar
+            </button>
+          </div>
+
+          <div class="panel-foot">
+            <span class="counter" id="counter">0 caracteres</span>
+            <span class="hint">Ctrl + Enter</span>
+          </div>
+        </section>
+
+        <!-- TRADUÇÃO -->
+        <section class="panel panel-out">
+          <div class="panel-top">
+            <span class="panel-label"><i class="dot"></i> Tradução</span>
+            <span class="chip" id="toChip">Inglês</span>
+          </div>
+
+          <textarea id="out" rows="4" readonly placeholder="A tradução aparece aqui…"
+            aria-label="Texto traduzido"></textarea>
+
+          <div class="toolbar">
+            <button class="chip-btn" id="speakOutBtn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                <path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/>
+              </svg>
+              Ouvir
+            </button>
+
+            <button class="chip-btn" id="copyBtn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="12" height="12" rx="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+              Copiar
+            </button>
+
+            <button class="chip-btn" id="subtitleBtn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="5" width="20" height="14" rx="3"/>
+                <path d="M6.5 12h3.5"/><path d="M14 12h3.5"/>
+              </svg>
+              Legenda
+            </button>
+          </div>
+
+          <div class="panel-foot">
+            <span class="counter" id="outCounter">0 caracteres</span>
+            <span class="hint">Tradução automática</span>
+          </div>
+        </section>
+
+      </div>
+
+      <button class="primary" id="translateBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/>
+          <path d="M18.5 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/>
+        </svg>
+        <span id="translateLabel">Traduzir agora</span>
+      </button>
+
+      <p class="status" id="status" role="status" aria-live="polite" data-type="idle">Pronto para traduzir</p>
+
     </div>
+  </main>
 
-    <header class="w-full max-w-3xl text-center mb-6 mt-14 relative z-10">
-        <h1 class="text-4xl font-extrabold tracking-tight text-white">QUANT<span class="text-emerald-400">REAL</span></h1>
-        <p class="text-[10px] text-slate-400 mt-2 tracking-[0.2em] uppercase font-bold">Base Europeia &bull; Top 12 Ligas Gratuitas</p>
-    </header>
+  <footer class="foot">LinguaVox • tradução via MyMemory API • processamento 100% no navegador</footer>
+</div>
 
-    <!-- SELETOR DE LIGAS (Corrigido com as 12 ligas do Plano Free) -->
-    <nav class="w-full max-w-3xl mb-4 relative z-10 hidden" id="league-nav">
-        <div class="flex items-center gap-2 mb-2">
-            <span class="text-[10px] text-emerald-500 uppercase tracking-widest font-bold">Ligas Disponíveis (API Free)</span>
-            <div class="flex-1 h-px bg-slate-700"></div>
-        </div>
-        <div class="league-scroll" id="league-container"></div>
-    </nav>
+<!-- Overlay de legenda -->
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Modo legenda">
+  <div class="ov-top">
+    <button class="ov-btn" id="ovPlay" type="button">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      Play
+    </button>
+    <button class="ov-btn" id="ovClose" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+      Fechar
+    </button>
+  </div>
+  <div class="ov-body">
+    <p class="ov-src" id="ovSrc"></p>
+    <p class="ov-out" id="ovOut"></p>
+  </div>
+</div>
 
-    <main class="w-full max-w-3xl glass rounded-2xl p-4 md:p-6 shadow-2xl relative z-10">
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-        <!-- BANNER DE ALERTA -->
-        <div id="no-key-banner" class="bg-amber-900/20 border border-amber-500/50 rounded-xl p-6 text-center mb-5">
-            <i class="fa-solid fa-triangle-exclamation text-amber-400 text-3xl mb-3"></i>
-            <p class="text-amber-400 text-sm font-bold uppercase tracking-widest mb-2">Acesso Restrito</p>
-            <p class="text-amber-200/70 text-xs mb-5">Para liberar as 12 ligas do rastreio, clique no cadeado no topo esquerdo e insira sua chave da Football-Data.</p>
-            <button onclick="toggleVault()" class="bg-amber-500 text-black text-xs font-bold uppercase tracking-widest px-6 py-3 rounded-lg hover:bg-amber-400 transition-colors">
-                Abrir Cofre
-            </button>
-        </div>
+<script>
+(function () {
+  "use strict";
 
-        <!-- MÓDULO DE BUSCA -->
-        <div class="bg-[#020617] border border-slate-700 rounded-xl p-4 mb-5 relative hidden" id="search-module">
-            <h2 class="text-[11px] font-bold text-emerald-400 mb-4 uppercase tracking-widest flex items-center gap-2">
-                <i class="fa-solid fa-bolt"></i> Buscar Times
-            </h2>
+  /* ===================== DADOS ===================== */
+  const LANGS = [
+    { c:"pt", n:"Português",  f:"🇧🇷", s:"pt-BR" },
+    { c:"en", n:"Inglês",     f:"🇺🇸", s:"en-US" },
+    { c:"es", n:"Espanhol",   f:"🇪🇸", s:"es-ES" },
+    { c:"fr", n:"Francês",    f:"🇫🇷", s:"fr-FR" },
+    { c:"it", n:"Italiano",   f:"🇮🇹", s:"it-IT" },
+    { c:"de", n:"Alemão",     f:"🇩🇪", s:"de-DE" },
+    { c:"zh", n:"Chinês",     f:"🇨🇳", s:"zh-CN" },
+    { c:"ja", n:"Japonês",    f:"🇯🇵", s:"ja-JP" },
+    { c:"ko", n:"Coreano",    f:"🇰🇷", s:"ko-KR" },
+    { c:"ru", n:"Russo",      f:"🇷🇺", s:"ru-RU" },
+    { c:"ar", n:"Árabe",      f:"🇸🇦", s:"ar-SA" },
+    { c:"hi", n:"Hindi",      f:"🇮🇳", s:"hi-IN" },
+    { c:"nl", n:"Holandês",   f:"🇳🇱", s:"nl-NL" },
+    { c:"pl", n:"Polonês",    f:"🇵🇱", s:"pl-PL" },
+    { c:"tr", n:"Turco",      f:"🇹🇷", s:"tr-TR" },
+    { c:"uk", n:"Ucraniano",  f:"🇺🇦", s:"uk-UA" },
+    { c:"el", n:"Grego",      f:"🇬🇷", s:"el-GR" },
+    { c:"he", n:"Hebraico",   f:"🇮🇱", s:"he-IL" },
+    { c:"th", n:"Tailandês",  f:"🇹🇭", s:"th-TH" },
+    { c:"vi", n:"Vietnamita", f:"🇻🇳", s:"vi-VN" },
+    { c:"sv", n:"Sueco",      f:"🇸🇪", s:"sv-SE" },
+    { c:"no", n:"Norueguês",  f:"🇳🇴", s:"nb-NO" },
+    { c:"da", n:"Dinamarquês",f:"🇩🇰", s:"da-DK" },
+    { c:"fi", n:"Finlandês",  f:"🇫🇮", s:"fi-FI" },
+    { c:"ro", n:"Romeno",     f:"🇷🇴", s:"ro-RO" },
+    { c:"cs", n:"Tcheco",     f:"🇨🇿", s:"cs-CZ" },
+    { c:"hu", n:"Húngaro",    f:"🇭🇺", s:"hu-HU" },
+    { c:"id", n:"Indonésio",  f:"🇮🇩", s:"id-ID" },
+    { c:"tl", n:"Filipino",   f:"🇵🇭", s:"fil-PH" },
+    { c:"bn", n:"Bengali",    f:"🇧🇩", s:"bn-BD" }
+  ];
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
-                <div>
-                    <label class="text-[10px] text-blue-400 uppercase tracking-widest font-bold mb-2 block">Mandante</label>
-                    <div class="autocomplete-wrap" id="wrap-A">
-                        <input type="text" id="searchA" class="input-field" placeholder="Selecione a liga acima..." disabled autocomplete="off">
-                        <div class="autocomplete-dropdown" id="dropdown-A"></div>
-                    </div>
-                    <div id="selected-A" class="hidden mt-2"></div>
-                </div>
-                <div>
-                    <label class="text-[10px] text-red-400 uppercase tracking-widest font-bold mb-2 block">Visitante</label>
-                    <div class="autocomplete-wrap" id="wrap-B">
-                        <input type="text" id="searchB" class="input-field" placeholder="Selecione a liga acima..." disabled autocomplete="off">
-                        <div class="autocomplete-dropdown" id="dropdown-B"></div>
-                    </div>
-                    <div id="selected-B" class="hidden mt-2"></div>
-                </div>
-            </div>
+  const langBy = code => LANGS.find(l => l.c === code) || LANGS[0];
 
-            <button id="btn-fetch" onclick="fetchBothTeams()" disabled class="w-full bg-emerald-600/20 border border-emerald-500 text-emerald-400 font-bold py-3.5 rounded-lg transition-all text-xs uppercase tracking-widest hover:bg-emerald-600 hover:text-white disabled:opacity-30 flex items-center justify-center gap-2 mt-4">
-                <i class="fa-solid fa-cloud-arrow-down"></i> Baixar Últimos 10 Jogos
-            </button>
-        </div>
+  /* ===================== ESTADO ===================== */
+  const state = { from:"pt", to:"en", busy:false };
 
-        <!-- CARDS DOS TIMES -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 hidden" id="cards-module">
-            <!-- TIME A -->
-            <div id="card-A" class="bg-slate-800/40 p-4 rounded-xl border border-slate-700 transition-all">
-                <h2 class="text-xs font-bold text-blue-400 mb-3 border-b border-slate-700 pb-2 flex justify-between items-center">
-                    <span id="labelA" class="uppercase">TIME A</span>
-                </h2>
-                <div class="grid-t border-b border-slate-700 pb-1 mb-2">
-                    <span class="text-[9px] text-slate-500 uppercase">Métrica</span>
-                    <span class="text-[9px] text-slate-500 uppercase text-center">Pró</span>
-                    <span class="text-[9px] text-slate-500 uppercase text-center">Contra</span>
-                </div>
-                <div class="grid-t"><span class="text-[11px] text-slate-300 font-bold">Gols</span><input type="number" id="g_proA" class="input-mini text-emerald-300 border-emerald-900/50"><input type="number" id="g_conA" class="input-mini text-emerald-300 border-emerald-900/50"></div>
-                <div class="grid-t"><span class="text-[10px] text-slate-500">Escanteios</span><input type="number" id="e_proA" class="input-mini text-slate-400"><input type="number" id="e_conA" class="input-mini text-slate-400"></div>
-                <div class="grid-t"><span class="text-[10px] text-slate-500">Cartões</span><input type="number" id="c_proA" class="input-mini text-slate-400"><input type="number" id="c_conA" class="input-mini text-slate-400"></div>
-                <div class="mt-4 pt-3 border-t border-slate-700">
-                    <span class="text-[9px] text-slate-400 uppercase tracking-widest block mb-2 font-bold">Ambas Marcam (BTTS)</span>
-                    <div class="flex gap-2">
-                        <input type="number" id="j_A" placeholder="Jogos" class="input-mini text-blue-300 border-blue-900/50">
-                        <input type="number" id="btts_A" placeholder="Bateu BTTS" class="input-mini text-blue-300 border-blue-900/50">
-                    </div>
-                </div>
-            </div>
+  /* ===================== REFS ===================== */
+  const $  = s => document.querySelector(s);
+  const srcEl      = $("#src");
+  const outEl      = $("#out");
+  const counterEl  = $("#counter");
+  const outCounterEl = $("#outCounter");
+  const statusEl   = $("#status");
+  const fromChip   = $("#fromChip");
+  const toChip     = $("#toChip");
+  const translateBtn = $("#translateBtn");
+  const translateLabel = $("#translateLabel");
+  const micBtn     = $("#micBtn");
+  const micLabel   = $("#micLabel");
+  const overlay    = $("#overlay");
+  const ovSrc      = $("#ovSrc");
+  const ovOut      = $("#ovOut");
+  const toastEl    = $("#toast");
 
-            <!-- TIME B -->
-            <div id="card-B" class="bg-slate-800/40 p-4 rounded-xl border border-slate-700 transition-all">
-                <h2 class="text-xs font-bold text-red-400 mb-3 border-b border-slate-700 pb-2 flex justify-between items-center">
-                    <span id="labelB" class="uppercase">TIME B</span>
-                </h2>
-                <div class="grid-t border-b border-slate-700 pb-1 mb-2">
-                    <span class="text-[9px] text-slate-500 uppercase">Métrica</span>
-                    <span class="text-[9px] text-slate-500 uppercase text-center">Pró</span>
-                    <span class="text-[9px] text-slate-500 uppercase text-center">Contra</span>
-                </div>
-                <div class="grid-t"><span class="text-[11px] text-slate-300 font-bold">Gols</span><input type="number" id="g_proB" class="input-mini text-emerald-300 border-emerald-900/50"><input type="number" id="g_conB" class="input-mini text-emerald-300 border-emerald-900/50"></div>
-                <div class="grid-t"><span class="text-[10px] text-slate-500">Escanteios</span><input type="number" id="e_proB" class="input-mini text-slate-400"><input type="number" id="e_conB" class="input-mini text-slate-400"></div>
-                <div class="grid-t"><span class="text-[10px] text-slate-500">Cartões</span><input type="number" id="c_proB" class="input-mini text-slate-400"><input type="number" id="c_conB" class="input-mini text-slate-400"></div>
-                <div class="mt-4 pt-3 border-t border-slate-700">
-                    <span class="text-[9px] text-slate-400 uppercase tracking-widest block mb-2 font-bold">Ambas Marcam (BTTS)</span>
-                    <div class="flex gap-2">
-                        <input type="number" id="j_B" placeholder="Jogos" class="input-mini text-red-300 border-red-900/50">
-                        <input type="number" id="btts_B" placeholder="Bateu BTTS" class="input-mini text-red-300 border-red-900/50">
-                    </div>
-                </div>
-            </div>
-        </div>
+  /* ===================== UTIL ===================== */
+  const decoder = document.createElement("textarea");
+  function decodeEntities(str) {
+    if (!str) return "";
+    decoder.innerHTML = str;
+    return decoder.value;
+  }
 
-        <!-- BOTÕES DE CÁLCULO -->
-        <div class="mt-6 pt-5 border-t border-slate-700 hidden" id="calc-module">
-            <h3 class="text-[10px] text-slate-400 uppercase tracking-widest mb-4 text-center font-bold">Cruzar Dados Matematicamente</h3>
-            <div class="grid grid-cols-2 gap-3">
-                <button onclick="calcular('GOLS')" class="btn-calc bg-emerald-600/20 border-emerald-500 text-emerald-400 hover:bg-emerald-600 hover:text-white shadow-lg"><i class="fa-solid fa-futbol"></i> Gols</button>
-                <button onclick="calcular('BTTS')" class="btn-calc bg-blue-600/20 border-blue-500 text-blue-400 hover:bg-blue-600 hover:text-white shadow-lg"><i class="fa-solid fa-handshake"></i> Ambas</button>
-                <button onclick="calcular('ESCANTEIOS')" class="btn-calc bg-purple-600/20 border-purple-500 text-purple-400 hover:bg-purple-600 hover:text-white shadow-lg"><i class="fa-solid fa-flag"></i> Escanteios</button>
-                <button onclick="calcular('CARTOES')" class="btn-calc bg-amber-600/20 border-amber-500 text-amber-400 hover:bg-amber-600 hover:text-white shadow-lg"><i class="fa-solid fa-square"></i> Cartões</button>
-            </div>
-        </div>
-    </main>
+  let toastTimer;
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove("show"), 2000);
+  }
 
-    <!-- PAINEL DE RESULTADOS -->
-    <section id="result-panel" class="w-full max-w-3xl mt-4 hidden opacity-0 transition-all duration-500 pb-10 relative z-10">
-        <div class="glass rounded-2xl p-6 border-t-4" id="result-card">
-            <div class="text-center mb-6">
-                <h3 id="result-title" class="text-xs text-slate-400 uppercase tracking-widest font-bold">Expectativa Total</h3>
-                <p id="total-metric" class="text-5xl mono font-bold text-white my-3">0.00</p>
-                <p id="verdict-text" class="text-xs font-bold uppercase tracking-wider px-5 py-2 inline-block rounded-lg"></p>
-            </div>
-            <div class="grid grid-cols-2 gap-4 text-center border-t border-slate-700 pt-6">
-                <div><p class="text-[10px] text-slate-500 uppercase tracking-widest">Mandante</p><p id="exp-A" class="text-2xl mono text-blue-300 mt-2">0.00</p></div>
-                <div><p class="text-[10px] text-slate-500 uppercase tracking-widest">Visitante</p><p id="exp-B" class="text-xl mono text-red-300 mt-2">0.00</p></div>
-            </div>
-        </div>
-    </section>
+  function setStatus(msg, type = "idle") {
+    statusEl.textContent = msg;
+    statusEl.dataset.type = type;
+  }
 
-    <!-- O COFRE DE API -->
-    <div id="vault-overlay" onclick="toggleVault()" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] hidden opacity-0 transition-opacity duration-300"></div>
-    
-    <aside id="vault-drawer" class="fixed top-0 left-0 w-full max-w-sm h-full bg-[#050a14] border-r border-slate-800 z-[110] transform -translate-x-full transition-transform duration-300 shadow-2xl flex flex-col">
-        <div class="p-6 border-b border-slate-800 flex justify-between items-center bg-[#020617]">
-            <h2 class="text-sm font-bold text-white uppercase tracking-widest flex items-center gap-2">
-                <i class="fa-solid fa-key text-emerald-500"></i> Cofre de API
-            </h2>
-            <button onclick="toggleVault()" class="text-slate-500 hover:text-red-400 text-2xl transition-colors">&times;</button>
-        </div>
-        <div class="p-6 flex-1 overflow-y-auto">
-            <p class="text-xs text-slate-400 mb-6 leading-relaxed">Insira seu <strong>Token X-Auth</strong> da Football-Data.org para acessar o banco de dados oficial.</p>
-            
-            <label class="block text-[10px] text-emerald-400 font-bold uppercase tracking-wider mb-2">API Token</label>
-            <input type="text" id="api-key-input" placeholder="Cole sua chave aqui..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-4 text-xs mono text-white focus:border-emerald-500 outline-none mb-6">
-            
-            <div class="bg-emerald-900/10 border border-emerald-900/40 p-4 rounded-lg mb-6">
-                <p class="text-[10px] text-emerald-200/80 leading-relaxed">
-                    <strong class="text-emerald-400">COMO OBTER:</strong><br><br>
-                    Crie uma conta gratuita em <a href="https://www.football-data.org/client/register" target="_blank" class="text-white underline">football-data.org</a>, copie o token no email e cole acima.
-                </p>
-            </div>
-            
-            <button onclick="saveApiKey()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 rounded-lg text-xs uppercase tracking-widest transition-colors shadow-[0_0_20px_rgba(16,185,129,0.3)]">
-                Salvar Chave
-            </button>
-            <button onclick="clearApiKey()" class="w-full mt-3 bg-slate-800 hover:bg-slate-700 text-slate-400 font-bold py-3 rounded-lg text-[10px] uppercase transition-colors">
-                Apagar Chave
-            </button>
-        </div>
-    </aside>
+  function setBusy(on) {
+    state.busy = on;
+    translateBtn.disabled = on;
+    translateLabel.textContent = on ? "Traduzindo…" : "Traduzir agora";
+    const icon = translateBtn.querySelector("svg");
+    if (icon) icon.style.display = on ? "none" : "";
+    let sp = translateBtn.querySelector(".spinner");
+    if (on && !sp) {
+      sp = document.createElement("span");
+      sp.className = "spinner";
+      translateBtn.insertBefore(sp, translateBtn.firstChild);
+    } else if (!on && sp) {
+      sp.remove();
+    }
+  }
 
-    <script>
-    // =============================================
-    // DICIONÁRIO CORRIGIDO: APENAS AS 12 LIGAS DO PLANO GRÁTIS
-    // =============================================
-    const LEAGUES = [
-        { code: 'PL',  name: 'Premier League', flag: '🇬🇧' },
-        { code: 'PD',  name: 'La Liga', flag: '🇪🇸' },
-        { code: 'SA',  name: 'Serie A', flag: '🇮🇹' },
-        { code: 'BL1', name: 'Bundesliga', flag: '🇩🇪' },
-        { code: 'FL1', name: 'Ligue 1', flag: '🇫🇷' },
-        { code: 'BSA', name: 'Brasileirão', flag: '🇧🇷' },
-        { code: 'PPL', name: 'Primeira Liga', flag: '🇵🇹' },
-        { code: 'DED', name: 'Eredivisie', flag: '🇳🇱' },
-        { code: 'ELC', name: 'Championship', flag: '🇬🇧' },
-        { code: 'CL',  name: 'Champions League', flag: '🇪🇺' },
-        { code: 'CLI', name: 'Libertadores', flag: '🌎' }
-    ];
+  function updateChips() {
+    fromChip.textContent = langBy(state.from).n;
+    toChip.textContent   = langBy(state.to).n;
+  }
 
-    const state = {
-        apiKey: localStorage.getItem('fb_api_key') || '',
-        selectedLeague: null,
-        leagueTeams: {},
-        teamA: null,
-        teamB: null
+  function updateCounters() {
+    const n = srcEl.value.length;
+    counterEl.textContent = n.toLocaleString("pt-BR") + (n === 1 ? " caractere" : " caracteres");
+    counterEl.classList.toggle("is-near", n > 450);
+    const m = outEl.value.length;
+    outCounterEl.textContent = m.toLocaleString("pt-BR") + (m === 1 ? " caractere" : " caracteres");
+  }
+
+  /* ===================== SELECT CUSTOMIZADO ===================== */
+  function closeAllSelects() {
+    document.querySelectorAll(".select.is-open").forEach(el => {
+      el.classList.remove("is-open");
+      const b = el.querySelector(".select-btn");
+      if (b) b.setAttribute("aria-expanded", "false");
+    });
+  }
+
+  function createSelect(host, { label, value, onChange }) {
+    const wrap = document.createElement("div");
+    wrap.className = "select";
+    wrap.innerHTML =
+      '<button type="button" class="select-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="' + label + '">' +
+        '<span class="s-flag"></span>' +
+        '<span class="s-name"></span>' +
+        '<svg class="s-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>' +
+      '</button>' +
+      '<div class="select-menu" role="listbox" aria-label="' + label + '"></div>';
+    host.appendChild(wrap);
+
+    const btn    = wrap.querySelector(".select-btn");
+    const menu   = wrap.querySelector(".select-menu");
+    const flagEl = wrap.querySelector(".s-flag");
+    const nameEl = wrap.querySelector(".s-name");
+
+    let current = value;
+
+    function paint() {
+      const lang = langBy(current);
+      flagEl.textContent = lang.f;
+      nameEl.textContent = lang.n;
+      Array.prototype.forEach.call(menu.children, li => {
+        const on = li.dataset.code === current;
+        li.classList.toggle("is-active", on);
+        li.setAttribute("aria-selected", on ? "true" : "false");
+      });
+    }
+
+    LANGS.forEach(l => {
+      const item = document.createElement("button");
+      item.type = "button";
+      item.className = "select-item";
+      item.dataset.code = l.c;
+      item.setAttribute("role", "option");
+      item.innerHTML = '<span class="i-flag">' + l.f + '</span>' +
+                       '<span class="i-name">' + l.n + '</span>' +
+                       '<span class="i-code">' + l.c.toUpperCase() + '</span>';
+      item.addEventListener("click", () => {
+        current = l.c;
+        paint();
+        closeAllSelects();
+        onChange(l.c);
+      });
+      menu.appendChild(item);
+    });
+
+    btn.addEventListener("click", e => {
+      e.stopPropagation();
+      const isOpen = wrap.classList.contains("is-open");
+      closeAllSelects();
+      if (!isOpen) {
+        wrap.classList.add("is-open");
+        btn.setAttribute("aria-expanded", "true");
+        const active = menu.querySelector(".is-active");
+        if (active) active.scrollIntoView({ block: "nearest" });
+      }
+    });
+
+    paint();
+    return { get value() { return current; }, set(v) { current = v; paint(); } };
+  }
+
+  document.addEventListener("click", closeAllSelects);
+  document.addEventListener("keydown", e => { if (e.key === "Escape") closeAllSelects(); });
+
+  /* ===================== INSTÂNCIA DOS SELECTS ===================== */
+  createSelect($("#fromSelect"), {
+    label: "Idioma de origem",
+    value: state.from,
+    onChange: v => { state.from = v; updateChips(); }
+  });
+
+  const toSelect = createSelect($("#toSelect"), {
+    label: "Idioma de destino",
+    value: state.to,
+    onChange: v => { state.to = v; updateChips(); }
+  });
+
+  /* ===================== TRADUÇÃO ===================== */
+  const API = "https://api.mymemory.translated.net/get";
+
+  function chunkText(text, max) {
+    max = max || 450;
+    if (text.length <= max) return [text];
+    const parts = [];
+    let rest = text;
+    while (rest.length > max && parts.length < 8) {
+      let slice = rest.slice(0, max);
+      let cut = Math.max(
+        slice.lastIndexOf(". "),
+        slice.lastIndexOf("! "),
+        slice.lastIndexOf("? "),
+        slice.lastIndexOf("\n"),
+        slice.lastIndexOf(" ")
+      );
+      if (cut < max * 0.5) cut = max; else cut += 1;
+      parts.push(rest.slice(0, cut).trim());
+      rest = rest.slice(cut).trim();
+    }
+    if (rest) parts.push(rest);
+    return parts;
+  }
+
+  async function translateChunk(text, from, to) {
+    const url = API + "?q=" + encodeURIComponent(text) + "&langpair=" + from + "|" + to;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("http");
+    const data = await res.json();
+    const raw = data && data.responseData && data.responseData.translatedText;
+    if (!raw) throw new Error("empty");
+    const out = decodeEntities(raw);
+    if (/MYMEMORY WARNING|QUOTA|INVALID/i.test(out)) throw new Error("quota");
+    if (/PLEASE SELECT TWO DISTINCT LANGUAGES/i.test(out)) throw new Error("same");
+    return out;
+  }
+
+  async function doTranslate() {
+    if (state.busy) return;
+    const text = srcEl.value.trim();
+
+    if (!text) {
+      setStatus("Digite algo para traduzir", "warn");
+      srcEl.focus();
+      return;
+    }
+
+    if (state.from === state.to) {
+      outEl.value = text;
+      updateCounters();
+      setStatus("Mesmo idioma — texto mantido", "ok");
+      return;
+    }
+
+    setBusy(true);
+    setStatus("Traduzindo…", "busy");
+
+    try {
+      const chunks = chunkText(text, 450);
+      const results = [];
+      for (let i = 0; i < chunks.length; i++) {
+        if (chunks.length > 1) setStatus("Traduzindo… " + (i + 1) + "/" + chunks.length, "busy");
+        results.push(await translateChunk(chunks[i], state.from, state.to));
+      }
+      outEl.value = results.join(" ");
+      updateCounters();
+      setStatus("✓ Tradução concluída", "ok");
+    } catch (err) {
+      console.error(err);
+      const msg =
+        err.message === "quota" ? "Limite da API atingido — tente novamente em instantes" :
+        err.message === "same"  ? "Selecione dois idiomas diferentes" :
+        "Não foi possível traduzir agora";
+      setStatus(msg, "err");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  /* ===================== VOZ (TTS) ===================== */
+  function speechCode(code) {
+    return langBy(code).s || code;
+  }
+
+  function speak(text, code) {
+    if (!text || !text.trim()) { toast("Nada para ouvir ainda"); return; }
+    if (!("speechSynthesis" in window)) { toast("Áudio não suportado neste navegador"); return; }
+    try {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = speechCode(code);
+      u.rate = 1;
+      u.pitch = 1;
+      window.speechSynthesis.speak(u);
+      setStatus("🔊 Reproduzindo em " + langBy(code).n + "…", "busy");
+      u.onend = () => setStatus("✓ Pronto", "ok");
+    } catch (e) {
+      toast("Não foi possível reproduzir o áudio");
+    }
+  }
+
+  /* ===================== MICROFONE (STT) ===================== */
+  let recognizer = null;
+
+  function setMicUI(on) {
+    micBtn.classList.toggle("is-rec", on);
+    micBtn.setAttribute("aria-pressed", on ? "true" : "false");
+    micLabel.textContent = on ? "Ouvindo…" : "Falar";
+  }
+
+  function toggleMic() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (recognizer) {
+      try { recognizer.stop(); } catch (e) {}
+      recognizer = null;
+      setMicUI(false);
+      setStatus("Microfone parado", "idle");
+      return;
+    }
+
+    if (!SR) {
+      setStatus("Microfone não suportado neste navegador", "warn");
+      return;
+    }
+
+    const r = new SR();
+    recognizer = r;
+    r.lang = speechCode(state.from);
+    r.interimResults = false;
+    r.maxAlternatives = 1;
+
+    setMicUI(true);
+    setStatus("🎤 Ouvindo… fale agora", "busy");
+
+    r.onresult = ev => {
+      const txt = ev.results[0][0].transcript;
+      srcEl.value = (srcEl.value ? srcEl.value.trim() + " " : "") + txt;
+      updateCounters();
+      setStatus("Áudio capturado", "ok");
+      setTimeout(doTranslate, 180);
+    };
+    r.onerror = () => {
+      setMicUI(false);
+      recognizer = null;
+      setStatus("Não foi possível captar o áudio", "err");
+    };
+    r.onend = () => {
+      setMicUI(false);
+      recognizer = null;
     };
 
-    const PROXY = 'https://corsproxy.io/?';
-
-    // =============================================
-    // INICIALIZAÇÃO E GESTÃO DE API KEY
-    // =============================================
-    (function init() {
-        renderLeagues();
-        updateApiStatus();
-    })();
-
-    function toggleVault() {
-        const overlay = document.getElementById('vault-overlay');
-        const drawer = document.getElementById('vault-drawer');
-        const input = document.getElementById('api-key-input');
-        
-        if (drawer.classList.contains('-translate-x-full')) {
-            input.value = state.apiKey;
-            overlay.classList.remove('hidden');
-            requestAnimationFrame(() => {
-                overlay.classList.remove('opacity-0');
-                drawer.classList.remove('-translate-x-full');
-            });
-        } else {
-            drawer.classList.add('-translate-x-full');
-            overlay.classList.add('opacity-0');
-            setTimeout(() => { overlay.classList.add('hidden'); }, 300);
-        }
+    try { r.start(); }
+    catch (e) {
+      setMicUI(false);
+      recognizer = null;
+      setStatus("Não foi possível iniciar o microfone", "err");
     }
+  }
 
-    function saveApiKey() {
-        const key = document.getElementById('api-key-input').value.trim();
-        if (key.length < 10) { alert('Insira um Token válido.'); return; }
-        state.apiKey = key;
-        localStorage.setItem('fb_api_key', key);
-        updateApiStatus();
-        toggleVault();
+  /* ===================== COPIAR ===================== */
+  async function copyOut() {
+    const text = outEl.value;
+    if (!text) { toast("Traduza primeiro"); return; }
+    try {
+      await navigator.clipboard.writeText(text);
+      toast("Copiado!");
+      setStatus("✓ Copiado para a área de transferência", "ok");
+    } catch (e) {
+      try {
+        outEl.removeAttribute("readonly");
+        outEl.select();
+        document.execCommand("copy");
+        outEl.setAttribute("readonly", "readonly");
+        window.getSelection().removeAllRanges();
+        toast("Copiado!");
+      } catch (e2) {
+        toast("Não foi possível copiar");
+      }
     }
+  }
 
-    function clearApiKey() {
-        state.apiKey = '';
-        localStorage.removeItem('fb_api_key');
-        state.selectedLeague = null;
-        state.teamA = null;
-        state.teamB = null;
-        updateApiStatus();
-        toggleVault();
+  /* ===================== OVERLAY / LEGENDA ===================== */
+  function openOverlay() {
+    if (!outEl.value) { toast("Traduza primeiro"); return; }
+    ovSrc.textContent = srcEl.value;
+    ovOut.textContent = outEl.value;
+    overlay.classList.add("is-open");
+    document.body.style.overflow = "hidden";
+    $("#ovClose").focus();
+  }
+
+  function closeOverlay() {
+    overlay.classList.remove("is-open");
+    document.body.style.overflow = "";
+  }
+
+  /* ===================== EVENTOS ===================== */
+  translateBtn.addEventListener("click", doTranslate);
+
+  $("#swapBtn").addEventListener("click", () => {
+    const prevFrom = state.from;
+    const prevTo = state.to;
+    state.from = prevTo;
+    state.to = prevFrom;
+
+    // reflete nos selects
+    document.querySelectorAll("#fromSelect .select-btn").forEach(() => {});
+    fromChip.textContent = langBy(state.from).n;
+    toChip.textContent = langBy(state.to).n;
+    // sincroniza componentes
+    syncSelects();
+
+    // troca os textos
+    const a = srcEl.value;
+    srcEl.value = outEl.value;
+    outEl.value = a;
+    updateCounters();
+    setStatus("Idiomas trocados", "ok");
+  });
+
+  // Sincroniza os selects com o state (usado no swap)
+  function syncSelects() {
+    document.querySelectorAll(".select-btn .s-name").forEach(() => {});
+    const fromName = langBy(state.from);
+    const toName = langBy(state.to);
+    const fromWrap = $("#fromSelect .select");
+    const toWrap = $("#toSelect .select");
+    if (fromWrap) {
+      fromWrap.querySelector(".s-flag").textContent = fromName.f;
+      fromWrap.querySelector(".s-name").textContent = fromName.n;
+      Array.prototype.forEach.call(fromWrap.querySelectorAll(".select-item"), li => {
+        const on = li.dataset.code === state.from;
+        li.classList.toggle("is-active", on);
+        li.setAttribute("aria-selected", on ? "true" : "false");
+      });
     }
-
-    function updateApiStatus() {
-        const dot = document.getElementById('api-dot');
-        const label = document.getElementById('api-status-label');
-        const banner = document.getElementById('no-key-banner');
-        const nav = document.getElementById('league-nav');
-        const search = document.getElementById('search-module');
-        
-        if (state.apiKey) {
-            dot.className = 'w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]';
-            label.textContent = 'API Ativa';
-            label.className = 'text-emerald-400 font-bold uppercase tracking-wider';
-            banner.classList.add('hidden');
-            nav.classList.remove('hidden');
-            search.classList.remove('hidden');
-        } else {
-            dot.className = 'w-2 h-2 rounded-full bg-slate-500';
-            label.textContent = 'API Offline';
-            label.className = 'text-slate-400 font-bold uppercase tracking-wider';
-            banner.classList.remove('hidden');
-            nav.classList.add('hidden');
-            search.classList.add('hidden');
-        }
+    if (toWrap) {
+      toWrap.querySelector(".s-flag").textContent = toName.f;
+      toWrap.querySelector(".s-name").textContent = toName.n;
+      Array.prototype.forEach.call(toWrap.querySelectorAll(".select-item"), li => {
+        const on = li.dataset.code === state.to;
+        li.classList.toggle("is-active", on);
+        li.setAttribute("aria-selected", on ? "true" : "false");
+      });
     }
+  }
 
-    // =============================================
-    // LIGAS E TIMES
-    // =============================================
-    function renderLeagues() {
-        const container = document.getElementById('league-container');
-        container.innerHTML = '';
-        LEAGUES.forEach(l => {
-            const chip = document.createElement('button');
-            chip.className = 'league-chip' + (state.selectedLeague === l.code ? ' active' : '');
-            chip.innerHTML = `<span class="text-sm">${l.flag}</span><span>${l.name}</span>`;
-            chip.onclick = () => selectLeague(l.code);
-            container.appendChild(chip);
-        });
+  srcEl.addEventListener("input", updateCounters);
+  outEl.addEventListener("input", updateCounters);
+
+  $("#clearBtn").addEventListener("click", () => {
+    srcEl.value = "";
+    outEl.value = "";
+    updateCounters();
+    setStatus("Pronto para traduzir", "idle");
+    srcEl.focus();
+  });
+
+  $("#speakSrcBtn").addEventListener("click", () => speak(srcEl.value, state.from));
+  $("#speakOutBtn").addEventListener("click", () => speak(outEl.value, state.to));
+  $("#copyBtn").addEventListener("click", copyOut);
+  $("#subtitleBtn").addEventListener("click", openOverlay);
+  $("#ovClose").addEventListener("click", closeOverlay);
+  $("#ovPlay").addEventListener("click", () => speak(outEl.value, state.to));
+  micBtn.addEventListener("click", toggleMic);
+
+  overlay.addEventListener("click", e => {
+    if (e.target === overlay) closeOverlay();
+  });
+
+  document.addEventListener("keydown", e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+      e.preventDefault();
+      doTranslate();
     }
+    if (e.key === "Escape" && overlay.classList.contains("is-open")) closeOverlay();
+  });
 
-    async function selectLeague(code) {
-        state.selectedLeague = code;
-        state.teamA = null; state.teamB = null;
-        renderLeagues();
-        clearTeamUI('A'); clearTeamUI('B');
-        document.getElementById('btn-fetch').disabled = true;
-
-        const inpA = document.getElementById('searchA');
-        const inpB = document.getElementById('searchB');
-        inpA.value = ''; inpB.value = '';
-        inpA.placeholder = 'Baixando times...'; inpB.placeholder = 'Baixando times...';
-        inpA.disabled = true; inpB.disabled = true;
-
-        try {
-            if (!state.leagueTeams[code]) {
-                const url = `https://api.football-data.org/v4/competitions/${code}/teams`;
-                const res = await fetch(PROXY + encodeURIComponent(url), { headers: { 'X-Auth-Token': state.apiKey } });
-                
-                if (!res.ok) {
-                    if (res.status === 403) throw new Error('Bloqueado: Sua chave gratuita não suporta essa liga ou estourou o limite.');
-                    if (res.status === 429) throw new Error('Limite de uso atingido. Espere um minuto.');
-                    throw new Error('Falha na conexão com a API.');
-                }
-                
-                const data = await res.json();
-                state.leagueTeams[code] = data.teams.map(t => ({ id: t.id, name: t.shortName || t.name }));
-            }
-            inpA.placeholder = 'Mandante...'; inpB.placeholder = 'Visitante...';
-            inpA.disabled = false; inpB.disabled = false;
-        } catch(e) {
-            inpA.placeholder = 'Erro'; inpB.placeholder = 'Erro';
-            alert(e.message);
-        }
-    }
-
-    // =============================================
-    // AUTOCOMPLETE
-    // =============================================
-    function setupAutocomplete(side) {
-        const input = document.getElementById('search' + side);
-        const dropdown = document.getElementById('dropdown-' + side);
-
-        input.addEventListener('input', () => {
-            if (!state.selectedLeague || !state.leagueTeams[state.selectedLeague]) return;
-            const query = input.value.toLowerCase().trim();
-            const teams = state.leagueTeams[state.selectedLeague];
-            
-            let filtered = query ? teams.filter(t => t.name.toLowerCase().includes(query)) : teams;
-            
-            if (filtered.length === 0) { dropdown.classList.remove('open'); return; }
-            
-            dropdown.innerHTML = filtered.map(t => `
-                <div class="ac-item" onclick="pickTeam(${t.id}, '${side}')">
-                    <span class="text-emerald-300 font-bold">${t.name}</span>
-                </div>
-            `).join('');
-            dropdown.classList.add('open');
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('#wrap-' + side)) dropdown.classList.remove('open');
-        });
-    }
-
-    function pickTeam(id, side) {
-        const team = state.leagueTeams[state.selectedLeague].find(t => t.id === id);
-        state[side === 'A' ? 'teamA' : 'teamB'] = team;
-        
-        document.getElementById('dropdown-' + side).classList.remove('open');
-        document.getElementById('search' + side).classList.add('hidden');
-        
-        const sel = document.getElementById('selected-' + side);
-        sel.classList.remove('hidden');
-        sel.innerHTML = `<div class="team-selected"><span class="ts-name">${team.name}</span><span class="ts-clear" onclick="clearTeamUI('${side}')"><i class="fa-solid fa-xmark"></i></span></div>`;
-        document.getElementById('label' + side).innerText = team.name;
-
-        if (state.teamA && state.teamB) document.getElementById('btn-fetch').disabled = false;
-    }
-
-    function clearTeamUI(side) {
-        state[side === 'A' ? 'teamA' : 'teamB'] = null;
-        document.getElementById('search' + side).classList.remove('hidden');
-        document.getElementById('search' + side).value = '';
-        document.getElementById('selected-' + side).classList.add('hidden');
-        document.getElementById('label' + side).innerText = 'TIME ' + side;
-        document.getElementById('btn-fetch').disabled = true;
-    }
-
-    setupAutocomplete('A');
-    setupAutocomplete('B');
-
-    // =============================================
-    // DOWNLOAD DOS JOGOS (COM CORREÇÃO DE FÉRIAS DE JULHO)
-    // =============================================
-    async function fetchBothTeams() {
-        const btn = document.getElementById('btn-fetch');
-        btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Extraindo Dados Oficiais...';
-        document.getElementById('search-module').classList.add('pulse-border');
-
-        try {
-            const resA = await fetchTeam(state.teamA);
-            await new Promise(r => setTimeout(r, 1000)); // Previne erro 429 da API Grátis
-            const resB = await fetchTeam(state.teamB);
-
-            fillData('A', resA); fillData('B', resB);
-            
-            document.getElementById('cards-module').classList.remove('hidden');
-            document.getElementById('calc-module').classList.remove('hidden');
-            btn.innerHTML = '<i class="fa-solid fa-check"></i> Matriz Preenchida';
-        } catch(e) {
-            alert('Erro: ' + e.message);
-            btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-down"></i> Tentar Novamente';
-        } finally {
-            document.getElementById('search-module').classList.remove('pulse-border');
-            btn.disabled = false;
-        }
-    }
-
-    async function fetchTeam(team) {
-        let url = `https://api.football-data.org/v4/teams/${team.id}/matches?status=FINISHED&limit=10`;
-        let res = await fetch(PROXY + encodeURIComponent(url), { headers: { 'X-Auth-Token': state.apiKey } });
-        if (!res.ok) throw new Error('Falha ao baixar dados do ' + team.name);
-        
-        let data = await res.json();
-        
-        // CORREÇÃO: "BUG DE JULHO". Na Europa as temporadas viram no meio do ano.
-        // Se a API retornar vazio para o ano atual, voltamos no tempo para o ano passado.
-        if (data.matches && data.matches.length === 0) {
-            const lastSeason = new Date().getFullYear() - 1;
-            const urlPast = `https://api.football-data.org/v4/teams/${team.id}/matches?status=FINISHED&season=${lastSeason}&limit=10`;
-            const resPast = await fetch(PROXY + encodeURIComponent(urlPast), { headers: { 'X-Auth-Token': state.apiKey } });
-            if (resPast.ok) {
-                data = await resPast.json();
-            }
-        }
-
-        let gp = 0, gc = 0, btts = 0; const t = data.matches ? data.matches.length : 0;
-        if(t === 0) throw new Error('Sem jogos encontrados na temporada recente para ' + team.name + '. Tente outro time.');
-
-        data.matches.forEach(m => {
-            const isH = m.homeTeam.id === team.id;
-            const f = isH ? m.score.fullTime.home : m.score.fullTime.away;
-            const a = isH ? m.score.fullTime.away : m.score.fullTime.home;
-            if(f !== null && a !== null) { 
-                gp += f; 
-                gc += a; 
-                if(f > 0 && a > 0) btts++; 
-            }
-        });
-
-        // O app usa GOLS REAIS e Estima Cartões/Escanteios (pois a API Gratuita não fornece isso)
-        return {
-            g_pro: (gp/t).toFixed(2), g_con: (gc/t).toFixed(2),
-            e_pro: (4.2 + gp/t*0.8).toFixed(1), e_con: (3.8 + gc/t*0.7).toFixed(1),
-            c_pro: (1.6 + gc/t*0.5).toFixed(1), c_con: (1.9 + gp/t*0.4).toFixed(1),
-            j: t, btts: btts
-        };
-    }
-
-    function fillData(side, s) {
-        document.getElementById('g_pro'+side).value = s.g_pro; document.getElementById('g_con'+side).value = s.g_con;
-        document.getElementById('e_pro'+side).value = s.e_pro; document.getElementById('e_con'+side).value = s.e_con;
-        document.getElementById('c_pro'+side).value = s.c_pro; document.getElementById('c_con'+side).value = s.c_con;
-        document.getElementById('j_'+side).value = s.j; document.getElementById('btts_'+side).value = s.btts;
-    }
-
-    function calcular(modo) {
-        const p = modo === 'GOLS' ? 'g_' : modo === 'ESCANTEIOS' ? 'e_' : 'c_';
-        let resA, resB, total, verdict, color;
-
-        if(modo !== 'BTTS') {
-            const pA = parseFloat(document.getElementById(p+'proA').value); const cA = parseFloat(document.getElementById(p+'conA').value);
-            const pB = parseFloat(document.getElementById(p+'proB').value); const cB = parseFloat(document.getElementById(p+'conB').value);
-            resA = (pA+cB)/2; resB = (pB+cA)/2; total = resA+resB;
-            
-            if(modo==='GOLS') {
-                if(total>=2.6) {verdict='Excelente'; color='border-green-500 bg-green-500/20 text-green-400';}
-                else if(total>=2.0) {verdict='Médio'; color='border-yellow-500 bg-yellow-500/20 text-yellow-400';}
-                else {verdict='Ruim (Under)'; color='border-red-500 bg-red-500/20 text-red-400';}
-            } else {
-                verdict = total > (modo==='ESCANTEIOS'?9.5:4.5) ? 'Bom' : 'Baixo';
-                color = 'border-purple-500 bg-purple-500/20 text-purple-400';
-            }
-        } else {
-            const pA = (document.getElementById('btts_A').value / document.getElementById('j_A').value) * 100;
-            const pB = (document.getElementById('btts_B').value / document.getElementById('j_B').value) * 100;
-            total = (pA+pB)/2; resA = pA; resB = pB;
-            verdict = total >= 55 ? 'Excelente (BTTS)' : 'Risco de Falha';
-            color = total >= 55 ? 'border-sky-500 bg-sky-500/20 text-sky-400' : 'border-red-500 bg-red-500/20 text-red-400';
-        }
-
-        document.getElementById('exp-A').innerText = modo==='BTTS' ? resA.toFixed(1)+'%' : resA.toFixed(2);
-        document.getElementById('exp-B').innerText = modo==='BTTS' ? resB.toFixed(1)+'%' : resB.toFixed(2);
-        document.getElementById('total-metric').innerText = modo==='BTTS' ? total.toFixed(1)+'%' : total.toFixed(2);
-        
-        const vEl = document.getElementById('verdict-text');
-        vEl.innerText = verdict; vEl.className = `text-[10px] font-bold uppercase tracking-wider px-4 py-1.5 inline-block rounded-lg ${color.substring(color.indexOf('bg-'))}`;
-        document.getElementById('result-card').className = `glass rounded-2xl p-5 md:p-6 border-t-4 shadow-lg ${color.split(' ')[0]}`;
-        
-        const panel = document.getElementById('result-panel'); panel.classList.remove('hidden');
-        requestAnimationFrame(() => { panel.classList.remove('opacity-0'); panel.classList.add('opacity-100'); panel.scrollIntoView({ behavior: 'smooth' }); });
-    }
-    </script>
+  /* ===================== INIT ===================== */
+  updateChips();
+  updateCounters();
+  setStatus("Pronto para traduzir", "idle");
+})();
+</script>
 </body>
 </html>
