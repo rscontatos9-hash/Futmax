@@ -38,15 +38,24 @@
   body { background-color: var(--bg); color: var(--text-main); font-family: 'Inter', system-ui, sans-serif; min-height: 100vh; display: flex; justify-content: center; overflow-x: hidden; position: relative; }
   body::before { content: ''; position: absolute; top: -100px; left: 50%; transform: translateX(-50%); width: 100vw; height: 500px; background: radial-gradient(circle at center, rgba(79, 124, 255, 0.15) 0%, transparent 60%); z-index: 0; pointer-events: none; }
   .app-container { width: 100%; max-width: 480px; padding: 24px 16px 40px; position: relative; z-index: 1; display: flex; flex-direction: column; gap: 20px; }
+  
   .header { text-align: center; margin-bottom: 8px; }
-  .top-bar { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px; }
-  .badge { display: inline-block; padding: 6px 14px; border-radius: 999px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); color: #CBD5E1; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-  .ui-lang-select { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--text-main); border-radius: 999px; padding: 6px 10px; font-size: 11px; font-weight: 700; cursor: pointer; outline: none; appearance: none; }
+  
+  /* Top Bar: Menu à esquerda e Badge à direita */
+  .top-bar { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+  
+  .badge { display: inline-block; padding: 6px 14px; border-radius: 999px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); color: #CBD5E1; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; box-shadow: 0 4px 15px rgba(0,0,0,0.2); text-align: center; }
+  .ui-lang-select { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--text-main); border-radius: 999px; padding: 6px 10px; font-size: 11px; font-weight: 700; cursor: pointer; outline: none; appearance: none; -webkit-appearance: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.2s; }
+  .ui-lang-select:hover { background: rgba(255, 255, 255, 0.1); }
+  .ui-lang-select option { background: #121420; color: white; }
+  
   .logo { font-size: 42px; font-weight: 800; background: linear-gradient(100deg, #7DD3FC, #818CF8 50%, #C084FC); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.03em; margin-bottom: 10px; }
-  .subtitle { color: var(--text-muted); font-size: 13px; line-height: 1.5; padding: 0 20px; }
+  .subtitle { color: var(--text-muted); font-size: 13px; line-height: 1.5; padding: 0 20px; text-align: center; margin: 0 auto; }
+  
   .lang-bar { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; }
   .lang-btn { display: flex; align-items: center; gap: 8px; background: var(--panel-bg); backdrop-filter: blur(10px); border: 1px solid var(--panel-border); padding: 14px 12px; border-radius: 18px; color: var(--text-main); font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; justify-content: center; }
   .swap-btn { width: 46px; height: 46px; border-radius: 50%; background: linear-gradient(135deg, #4F7CFF, #A855F7); border: none; color: white; font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 6px 20px rgba(168, 85, 247, 0.4); }
+  
   .audio-settings { background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 16px; backdrop-filter: blur(10px); }
   .profile-buttons { display: flex; gap: 8px; }
   .profile-btn { flex: 1; background: transparent; border: 1px solid transparent; color: var(--text-muted); padding: 10px; border-radius: 12px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
@@ -57,12 +66,14 @@
   input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
   input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; cursor: pointer; background: rgba(255, 255, 255, 0.1); border-radius: 999px; }
   input[type=range]::-webkit-slider-thumb { height: 18px; width: 18px; border-radius: 50%; background: #fff; cursor: pointer; -webkit-appearance: none; margin-top: -6px; }
+  
   .sel-container { position: relative; }
   .dropdown { position: absolute; top: calc(100% + 8px); left: 0; width: 100%; max-height: 250px; overflow-y: auto; background: #121420; border: 1px solid var(--panel-border); border-radius: 18px; padding: 8px; z-index: 100; display: none; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
   .dropdown.active { display: block; }
   .dropdown-item { display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 12px; cursor: pointer; font-size: 14px; color: var(--text-muted); }
   .dropdown-item:hover { background: rgba(255,255,255,0.08); color: white; }
   .dropdown-item.active { color: var(--accent); font-weight: 600; background: rgba(79, 124, 255, 0.1); }
+  
   .panel { background: var(--panel-bg); backdrop-filter: blur(16px); border: 1px solid var(--panel-border); border-radius: 24px; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
   .panel-header { display: flex; justify-content: space-between; align-items: center; }
   .panel-label { font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
@@ -73,16 +84,22 @@
   .action-btn { background: var(--btn-bg); border: 1px solid var(--panel-border); padding: 12px; border-radius: 999px; color: var(--text-main); font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
   .icon-svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
   .action-btn.listening { background: rgba(251, 113, 133, 0.15); border-color: rgba(251, 113, 133, 0.5); color: var(--error); }
+  
   .history-panel { display: none; background: rgba(0,0,0,0.3); border-radius: 16px; padding: 12px; margin-top: 4px; border: 1px solid var(--panel-border); }
   .history-panel.active { display: block; }
   .history-list { max-height: 150px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
   .history-item { background: rgba(255,255,255,0.03); padding: 10px; border-radius: 10px; font-size: 12px; cursor: pointer; border-left: 2px solid var(--accent); }
   .clear-hist-btn { width: 100%; background: rgba(251, 113, 133, 0.1); color: var(--error); border: 1px solid rgba(251, 113, 133, 0.3); padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; }
+  
   .panel-footer { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 4px; }
   .main-btn { width: 100%; padding: 20px; border-radius: 20px; background: linear-gradient(100deg, #4F7CFF, #A855F7); border: none; color: white; font-size: 16px; font-weight: 800; letter-spacing: 0.05em; cursor: pointer; box-shadow: 0 10px 30px -5px rgba(168, 85, 247, 0.5); margin-top: 10px; }
   .status-msg { text-align: center; font-size: 13px; font-weight: 600; color: var(--success); min-height: 20px; display: flex; align-items: center; justify-content: center; }
   .status-msg.error { color: var(--error); }
-  .app-footer { text-align: center; font-size: 11px; color: #4B526D; margin-top: 10px; line-height: 1.6; }
+  
+  /* Rodapé e Copyright em duas linhas */
+  .app-footer { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 6px; margin-top: 16px; font-size: 11px; color: #4B526D; line-height: 1.5; }
+  .copyright { font-size: 10px; color: #3A4059; font-weight: 500; letter-spacing: 0.5px; }
+  
   .overlay { position: fixed; inset: 0; background: rgba(5, 6, 10, 0.85); backdrop-filter: blur(12px); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 1000; }
   .overlay.active { display: flex; }
   .overlay-content { background: #121420; border: 1px solid var(--panel-border); border-radius: 24px; padding: 30px 24px; width: 100%; max-width: 400px; text-align: center; }
@@ -95,10 +112,11 @@
 <div class="app-container">
   <header class="header">
     <div class="top-bar">
-      <div class="badge" id="uiBadge">Tradutor com voz e legenda</div>
+      <!-- Menu à esquerda, Badge à direita -->
       <select class="ui-lang-select" id="uiLangSelect">
         <option value="pt">🇧🇷 PT</option><option value="en">🇺🇸 EN</option><option value="es">🇪🇸 ES</option><option value="hi">🇮🇳 HI</option><option value="zh">🇨🇳 ZH</option>
       </select>
+      <div class="badge" id="uiBadge">Tradutor com voz e legenda</div>
     </div>
     <h1 class="logo">LinguaVox</h1>
     <p class="subtitle" id="uiSubtitle">Traduza entre 30 idiomas com motor Google • MyMemory • Lingva (4x), áudio natural e legenda.</p>
@@ -119,8 +137,15 @@
     <div class="panel-header"><span class="panel-label label-origem" id="uiOrigin">Origem</span><span class="chip" id="fromChip">Português</span></div>
     <textarea id="srcText" placeholder="Digite ou fale algo..."></textarea>
     <div class="action-grid">
-      <button class="action-btn" id="micBtn"><span id="uiSpeakBtn">Falar</span></button>
-      <button class="action-btn" id="speakSrcBtn"><span id="uiListenBtn">Ouvir</span></button>
+      <button class="action-btn" id="micBtn">
+        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+        <span id="uiSpeakBtn">Falar</span>
+      </button>
+      <!-- Ícone de Ouvir adicionado -->
+      <button class="action-btn" id="speakSrcBtn">
+        <svg class="icon-svg" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+        <span id="uiListenBtn">Ouvir</span>
+      </button>
       <button class="action-btn" id="clearBtn"><span id="uiClearBtn">Limpar</span></button>
       <button class="action-btn" id="histBtn"><span id="uiHistBtn">Histórico</span> (<span id="histCount">0</span>)</button>
     </div>
@@ -128,10 +153,14 @@
     <div class="panel-footer"><span id="srcCount">0 caracteres</span><span>Ctrl+Enter</span></div>
   </div>
   <div class="panel">
-    <div class="panel-header"><span class="panel-label label-traducao" id="uiTranslation">Tradução</span><span class="chip" id="toChip">Inglês 100%</span></div>
+    <div class="panel-header"><span class="panel-label label-traducao" id="uiTranslation">Tradução</span><span class="chip" id="toChip">Inglês detectado</span></div>
     <textarea id="outText" placeholder="A tradução aparecerá aqui..." readonly></textarea>
     <div class="action-grid action-grid-3">
-      <button class="action-btn" id="speakOutBtn"><span id="uiListenBtn2">Ouvir</span></button>
+      <!-- Ícone de Ouvir adicionado -->
+      <button class="action-btn" id="speakOutBtn">
+        <svg class="icon-svg" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+        <span id="uiListenBtn2">Ouvir</span>
+      </button>
       <button class="action-btn" id="copyBtn"><span id="uiCopyBtn">Copiar</span></button>
       <button class="action-btn" id="subBtn"><span id="uiSubBtn">Legenda</span></button>
     </div>
@@ -139,16 +168,27 @@
   </div>
   <button class="main-btn" id="translateBtn">TRADUZIR AGORA</button>
   <div class="status-msg" id="statusMsg"></div>
-  <div class="app-footer" id="uiFooter">LinguaVox • Google + MyMemory + Lingva (4 instâncias) • 100% no navegador</div>
+  
+  <!-- Rodapé e Copyright -->
+  <div class="app-footer">
+    <span id="uiFooter">LinguaVox • Google + MyMemory + Lingva (4 instâncias) • 100% no navegador</span>
+    <span class="copyright">© 2026 Brasil</span>
+  </div>
 </div>
-<div class="overlay" id="overlay"><div class="overlay-content"><h3 id="uiModalTitle">Modo Legenda</h3><small id="ovSrc"></small><p id="ovOut"></p><div class="action-grid"><button class="action-btn" id="ovClose"><span id="uiModalClose">Fechar</span></button><button class="action-btn" style="background: var(--accent); color: white; border: none;" id="ovPlay"><span id="uiModalListen">Ouvir</span></button></div></div></div>
+<div class="overlay" id="overlay"><div class="overlay-content"><h3 id="uiModalTitle">Modo Legenda</h3><small id="ovSrc"></small><p id="ovOut"></p><div class="action-grid"><button class="action-btn" id="ovClose"><span id="uiModalClose">Fechar</span></button>
+<button class="action-btn" style="background: var(--accent); color: white; border: none;" id="ovPlay">
+  <svg class="icon-svg" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+  <span id="uiModalListen">Ouvir</span>
+</button>
+</div></div></div>
+
 <script>
   const i18n = {
-    pt: { badge: "Tradutor com voz e legenda", subtitle: "Traduza entre 30 idiomas com motor Google • MyMemory • Lingva (4x), áudio natural e legenda.", normalTone: "Tom Normal", deepTone: "Tom Grave", speed: "Velocidade", origin: "Origem", translation: "Tradução", srcPlaceholder: "Digite ou fale algo...", outPlaceholder: "A tradução aparecerá aqui...", speak: "Falar", listen: "Ouvir", clear: "Limpar", history: "Histórico", copy: "Copiar", subtitleBtn: "Legenda", translateBtn: "TRADUZIR AGORA", translatingBtn: "TRADUZINDO...", clearHistory: "Limpar Histórico", noHistory: "Nenhum histórico recente.", chars: "caracteres", autoTrans: "Tradução automática", statusListening: "Ouvindo... Fale agora.", statusTranslating: "Traduzindo...", statusSuccess: "✓ Traduzido com sucesso", statusCopied: "✓ Copiado!", statusRecovered: "Histórico recuperado.", statusCleared: "Histórico limpo.", statusError: "Erro na tradução.", statusMicError: "Erro no microfone.", statusMicDenied: "Permissão negada.", statusNoSpeech: "Nenhuma fala detectada.", statusMicUnsupported: "Voz não suportada.", modalTitle: "Modo Legenda", modalClose: "Fechar", modalListen: "Ouvir", footer: "LinguaVox • Google + MyMemory + Lingva (4 instâncias) • 100% no navegador" },
-    en: { badge: "Voice and subtitle translator", subtitle: "Translate between 30 languages with Google • MyMemory • Lingva (4x), natural audio and subtitles.", normalTone: "Normal Tone", deepTone: "Deep Tone", speed: "Speed", origin: "Source", translation: "Translation", srcPlaceholder: "Type or speak...", outPlaceholder: "Translation will appear here...", speak: "Speak", listen: "Listen", clear: "Clear", history: "History", copy: "Copy", subtitleBtn: "Subtitle", translateBtn: "TRANSLATE NOW", translatingBtn: "TRANSLATING...", clearHistory: "Clear History", noHistory: "No recent history.", chars: "characters", autoTrans: "Auto translation", statusListening: "Listening...", statusTranslating: "Translating...", statusSuccess: "✓ Translated", statusCopied: "✓ Copied!", statusRecovered: "History recovered.", statusCleared: "History cleared.", statusError: "Translation error.", statusMicError: "Mic error.", statusMicDenied: "Mic denied.", statusNoSpeech: "No speech.", statusMicUnsupported: "Not supported.", modalTitle: "Subtitle Mode", modalClose: "Close", modalListen: "Listen", footer: "LinguaVox • Google + MyMemory + Lingva (4x) • 100% in browser" },
-    es: { badge: "Traductor de voz y subtítulos", subtitle: "Traduce entre 30 idiomas con Google • MyMemory • Lingva (4x), audio natural y subtítulos.", normalTone: "Tono Normal", deepTone: "Tono Grave", speed: "Velocidad", origin: "Origen", translation: "Traducción", srcPlaceholder: "Escribe o habla...", outPlaceholder: "La traducción aparecerá aquí...", speak: "Hablar", listen: "Escuchar", clear: "Limpiar", history: "Historial", copy: "Copiar", subtitleBtn: "Subtítulo", translateBtn: "TRADUCIR AHORA", translatingBtn: "TRADUCIENDO...", clearHistory: "Limpiar Historial", noHistory: "Sin historial.", chars: "caracteres", autoTrans: "Traducción automática", statusListening: "Escuchando...", statusTranslating: "Traduciendo...", statusSuccess: "✓ Traducido", statusCopied: "✓ ¡Copiado!", statusRecovered: "Recuperado.", statusCleared: "Limpiado.", statusError: "Error de traducción.", statusMicError: "Error de micrófono.", statusMicDenied: "Permiso denegado.", statusNoSpeech: "No se detectó habla.", statusMicUnsupported: "No soportado.", modalTitle: "Modo Subtítulo", modalClose: "Cerrar", modalListen: "Escuchar", footer: "LinguaVox • Google + MyMemory + Lingva (4x) • 100% en el navegador" },
-    hi: { badge: "आवाज़ और सबटाइटल अनुवादक", subtitle: "Google • MyMemory • Lingva (4x) के साथ 30 भाषाओं में अनुवाद करें।", normalTone: "सामान्य स्वर", deepTone: "गहरा स्वर", speed: "गति", origin: "स्रोत", translation: "अनुवाद", srcPlaceholder: "कुछ लिखें...", outPlaceholder: "अनुवाद यहाँ...", speak: "बोलें", listen: "सुनें", clear: "साफ़ करें", history: "इतिहास", copy: "कॉपी", subtitleBtn: "सबटाइटल", translateBtn: "अनुवाद करें", translatingBtn: "हो रहा है...", clearHistory: "साफ़ करें", noHistory: "कोई इतिहास नहीं।", chars: "अक्षर", autoTrans: "स्वचालित अनुवाद", statusListening: "सुन रहा है...", statusTranslating: "अनुवाद...", statusSuccess: "✓ अनुवादित", statusCopied: "✓ कॉपी!", statusRecovered: "पुनर्प्राप्त।", statusCleared: "साफ़ किया।", statusError: "त्रुटि।", statusMicError: "माइक त्रुटि।", statusMicDenied: "अनुमति नहीं।", statusNoSpeech: "कोई भाषण नहीं।", statusMicUnsupported: "समर्थित नहीं।", modalTitle: "सबटाइटल मोड", modalClose: "बंद करें", modalListen: "सुनें", footer: "LinguaVox • Google + MyMemory + Lingva • 100%" },
-    zh: { badge: "语音和字幕翻译器", subtitle: "使用 Google • MyMemory • Lingva (4x) 在 30 种语言之间翻译。", normalTone: "正常音调", deepTone: "低沉音调", speed: "速度", origin: "源语言", translation: "翻译", srcPlaceholder: "输入内容...", outPlaceholder: "翻译将显示...", speak: "说话", listen: "收听", clear: "清除", history: "历史", copy: "复制", subtitleBtn: "字幕", translateBtn: "立即翻译", translatingBtn: "翻译中...", clearHistory: "清除历史", noHistory: "没有历史。", chars: "字符", autoTrans: "自动翻译", statusListening: "正在聆听...", statusTranslating: "正在翻译...", statusSuccess: "✓ 成功", statusCopied: "✓ 已复制！", statusRecovered: "已恢复。", statusCleared: "已清除。", statusError: "翻译错误。", statusMicError: "麦克风错误。", statusMicDenied: "权限被拒绝。", statusNoSpeech: "未检测到语音。", statusMicUnsupported: "不支持。", modalTitle: "字幕模式", modalClose: "关闭", modalListen: "收听", footer: "LinguaVox • Google + MyMemory + Lingva • 100% 在浏览器" }
+    pt: { badge: "Tradutor com voz e legenda", subtitle: "Traduza entre 30 idiomas com motor Google • MyMemory • Lingva (4x), áudio natural e legenda.", normalTone: "Tom Normal", deepTone: "Tom Grave", speed: "Velocidade", origin: "Origem", translation: "Tradução", srcPlaceholder: "Digite ou fale algo...", outPlaceholder: "A tradução aparecerá aqui...", speak: "Falar", listen: "Ouvir", clear: "Limpar", history: "Histórico", copy: "Copiar", subtitleBtn: "Legenda", translateBtn: "TRADUZIR AGORA", translatingBtn: "TRADUZINDO...", clearHistory: "Limpar Histórico", noHistory: "Nenhum histórico recente.", chars: "caracteres", autoTrans: "Tradução automática", statusListening: "Ouvindo... Fale agora.", statusTranslating: "Traduzindo...", statusSuccess: "✓ Traduzido com sucesso", statusCopied: "✓ Copiado!", statusRecovered: "Histórico recuperado.", statusCleared: "Histórico limpo.", statusError: "Erro na tradução.", statusMicError: "Erro no microfone.", statusMicDenied: "Permissão negada.", statusNoSpeech: "Nenhuma fala detectada.", statusMicUnsupported: "Voz não suportada.", modalTitle: "Modo Legenda", modalClose: "Fechar", modalListen: "Ouvir", footer: "LinguaVox • Google + MyMemory + Lingva (4 instâncias) • 100% no navegador", detected: "detectado" },
+    en: { badge: "Voice and subtitle translator", subtitle: "Translate between 30 languages with Google • MyMemory • Lingva (4x), natural audio and subtitles.", normalTone: "Normal Tone", deepTone: "Deep Tone", speed: "Speed", origin: "Source", translation: "Translation", srcPlaceholder: "Type or speak...", outPlaceholder: "Translation will appear here...", speak: "Speak", listen: "Listen", clear: "Clear", history: "History", copy: "Copy", subtitleBtn: "Subtitle", translateBtn: "TRANSLATE NOW", translatingBtn: "TRANSLATING...", clearHistory: "Clear History", noHistory: "No recent history.", chars: "characters", autoTrans: "Auto translation", statusListening: "Listening...", statusTranslating: "Translating...", statusSuccess: "✓ Translated", statusCopied: "✓ Copied!", statusRecovered: "History recovered.", statusCleared: "History cleared.", statusError: "Translation error.", statusMicError: "Mic error.", statusMicDenied: "Mic denied.", statusNoSpeech: "No speech.", statusMicUnsupported: "Not supported.", modalTitle: "Subtitle Mode", modalClose: "Close", modalListen: "Listen", footer: "LinguaVox • Google + MyMemory + Lingva (4x) • 100% in browser", detected: "detected" },
+    es: { badge: "Traductor de voz y subtítulos", subtitle: "Traduce entre 30 idiomas con Google • MyMemory • Lingva (4x), audio natural y subtítulos.", normalTone: "Tono Normal", deepTone: "Tono Grave", speed: "Velocidad", origin: "Origen", translation: "Traducción", srcPlaceholder: "Escribe o habla...", outPlaceholder: "La traducción aparecerá aquí...", speak: "Hablar", listen: "Escuchar", clear: "Limpiar", history: "Historial", copy: "Copiar", subtitleBtn: "Subtítulo", translateBtn: "TRADUCIR AHORA", translatingBtn: "TRADUCIENDO...", clearHistory: "Limpiar Historial", noHistory: "Sin historial.", chars: "caracteres", autoTrans: "Traducción automática", statusListening: "Escuchando...", statusTranslating: "Traduciendo...", statusSuccess: "✓ Traducido", statusCopied: "✓ ¡Copiado!", statusRecovered: "Recuperado.", statusCleared: "Limpiado.", statusError: "Error de traducción.", statusMicError: "Error de micrófono.", statusMicDenied: "Permiso denegado.", statusNoSpeech: "No se detectó habla.", statusMicUnsupported: "No soportado.", modalTitle: "Modo Subtítulo", modalClose: "Cerrar", modalListen: "Escuchar", footer: "LinguaVox • Google + MyMemory + Lingva (4x) • 100% en el navegador", detected: "detectado" },
+    hi: { badge: "आवाज़ और सबटाइटल अनुवादक", subtitle: "Google • MyMemory • Lingva (4x) के साथ 30 भाषाओं में अनुवाद करें।", normalTone: "सामान्य स्वर", deepTone: "गहरा स्वर", speed: "गति", origin: "स्रोत", translation: "अनुवाद", srcPlaceholder: "कुछ लिखें...", outPlaceholder: "अनुवाद यहाँ...", speak: "बोलें", listen: "सुनें", clear: "साफ़ करें", history: "इतिहास", copy: "कॉपी", subtitleBtn: "सबटाइटल", translateBtn: "अनुवाद करें", translatingBtn: "हो रहा है...", clearHistory: "साफ़ करें", noHistory: "कोई इतिहास नहीं।", chars: "अक्षर", autoTrans: "स्वचालित अनुवाद", statusListening: "सुन रहा है...", statusTranslating: "अनुवाद...", statusSuccess: "✓ अनुवादित", statusCopied: "✓ कॉपी!", statusRecovered: "पुनर्प्राप्त।", statusCleared: "साफ़ किया।", statusError: "त्रुटि।", statusMicError: "माइक त्रुटि।", statusMicDenied: "अनुमति नहीं।", statusNoSpeech: "कोई भाषण नहीं।", statusMicUnsupported: "समर्थित नहीं।", modalTitle: "सबटाइटल मोड", modalClose: "बंद करें", modalListen: "सुनें", footer: "LinguaVox • Google + MyMemory + Lingva • 100%", detected: "पहचाना गया" },
+    zh: { badge: "语音和字幕翻译器", subtitle: "使用 Google • MyMemory • Lingva (4x) 在 30 种语言之间翻译。", normalTone: "正常音调", deepTone: "低沉音调", speed: "速度", origin: "源语言", translation: "翻译", srcPlaceholder: "输入内容...", outPlaceholder: "翻译将显示...", speak: "说话", listen: "收听", clear: "清除", history: "历史", copy: "复制", subtitleBtn: "字幕", translateBtn: "立即翻译", translatingBtn: "翻译中...", clearHistory: "清除历史", noHistory: "没有历史。", chars: "字符", autoTrans: "自动翻译", statusListening: "正在聆听...", statusTranslating: "正在翻译...", statusSuccess: "✓ 成功", statusCopied: "✓ 已复制！", statusRecovered: "已恢复。", statusCleared: "已清除。", statusError: "翻译错误。", statusMicError: "麦克风错误。", statusMicDenied: "权限被拒绝。", statusNoSpeech: "未检测到语音。", statusMicUnsupported: "不支持。", modalTitle: "字幕模式", modalClose: "关闭", modalListen: "收听", footer: "LinguaVox • Google + MyMemory + Lingva • 100% 在浏览器", detected: "已检测" }
   };
   const LANGS = [
     {c:"pt", n:"Português", f:"🇧🇷"}, {c:"en", n:"Inglês", f:"🇺🇸"}, {c:"es", n:"Espanhol", f:"🇪🇸"}, {c:"fr", n:"Francês", f:"🇫🇷"}, {c:"it", n:"Italiano", f:"🇮🇹"}, {c:"de", n:"Alemão", f:"🇩🇪"}, {c:"ja", n:"Japonês", f:"🇯🇵"}, {c:"ko", n:"Coreano", f:"🇰🇷"}, {c:"zh", n:"Chinês", f:"🇨🇳"}, {c:"ru", n:"Russo", f:"🇷🇺"}, {c:"ar", n:"Árabe", f:"🇸🇦"}, {c:"hi", n:"Hindi", f:"🇮🇳"}, {c:"nl", n:"Holandês", f:"🇳🇱"}, {c:"pl", n:"Polonês", f:"🇵🇱"}, {c:"tr", n:"Turco", f:"🇹🇷"}, {c:"uk", n:"Ucraniano", f:"🇺🇦"}, {c:"el", n:"Grego", f:"🇬🇷"}, {c:"he", n:"Hebraico", f:"🇮🇱"}, {c:"th", n:"Tailandês", f:"🇹🇭"}, {c:"vi", n:"Vietnamita", f:"🇻🇳"}, {c:"sv", n:"Sueco", f:"🇸🇪"}, {c:"no", n:"Norueguês", f:"🇳🇴"}, {c:"da", n:"Dinamarquês", f:"🇩🇰"}, {c:"fi", n:"Finlandês", f:"🇫🇮"}, {c:"ro", n:"Romeno", f:"🇷🇴"}, {c:"cs", n:"Tcheco", f:"🇨🇿"}, {c:"hu", n:"Húngaro", f:"🇭🇺"}, {c:"id", n:"Indonésio", f:"🇮🇩"}, {c:"tl", n:"Filipino", f:"🇵🇭"}, {c:"bn", n:"Bengali", f:"🇧🇩"}
@@ -165,25 +205,32 @@
     const savedUiLang = localStorage.getItem("linguavox-uilang"); if (savedUiLang) state.uiLang = savedUiLang;
   } catch (e) {}
   const srcText = document.getElementById("srcText"); const outText = document.getElementById("outText"); const translateBtn = document.getElementById("translateBtn"); const statusMsg = document.getElementById("statusMsg"); const srcCount = document.getElementById("srcCount"); const outCount = document.getElementById("outCount"); const fromFlag = document.getElementById("fromFlag"); const fromName = document.getElementById("fromName"); const fromChip = document.getElementById("fromChip"); const toFlag = document.getElementById("toFlag"); const toName = document.getElementById("toName"); const toChip = document.getElementById("toChip"); const fromDropdown = document.getElementById("fromDropdown"); const toDropdown = document.getElementById("toDropdown"); const histCount = document.getElementById("histCount"); const micBtn = document.getElementById("micBtn"); const historyPanel = document.getElementById("historyPanel"); const historyList = document.getElementById("historyList"); const profileBtns = document.querySelectorAll(".profile-btn"); const speedSlider = document.getElementById("speedSlider"); const speedValue = document.getElementById("speedValue"); const uiLangSelect = document.getElementById("uiLangSelect");
+  
   const t = (key) => i18n[state.uiLang][key] || i18n['pt'][key];
+  
   function applyLanguage() {
     document.getElementById("uiBadge").textContent = t('badge'); document.getElementById("uiSubtitle").textContent = t('subtitle'); document.getElementById("uiNormalTone").textContent = t('normalTone'); document.getElementById("uiDeepTone").textContent = t('deepTone'); document.getElementById("uiSpeed").textContent = t('speed'); document.getElementById("uiOrigin").textContent = t('origin'); document.getElementById("uiTranslation").textContent = t('translation');
     srcText.placeholder = t('srcPlaceholder'); outText.placeholder = t('outPlaceholder');
     document.getElementById("uiSpeakBtn").textContent = t('speak'); document.getElementById("uiListenBtn").textContent = t('listen'); document.getElementById("uiClearBtn").textContent = t('clear'); document.getElementById("uiHistBtn").textContent = t('history'); document.getElementById("uiListenBtn2").textContent = t('listen'); document.getElementById("uiCopyBtn").textContent = t('copy'); document.getElementById("uiSubBtn").textContent = t('subtitleBtn');
     document.getElementById("translateBtn").textContent = t('translateBtn'); document.getElementById("uiClearHist").textContent = t('clearHistory'); document.getElementById("uiAutoTrans").textContent = t('autoTrans'); document.getElementById("uiFooter").textContent = t('footer');
     document.getElementById("uiModalTitle").textContent = t('modalTitle'); document.getElementById("uiModalClose").textContent = t('modalClose'); document.getElementById("uiModalListen").textContent = t('modalListen');
-    updateCounts(); updateHistoryUI();
+    updateCounts(); updateHistoryUI(); updateLangUI(); 
   }
+  
   uiLangSelect.value = state.uiLang; uiLangSelect.addEventListener("change", (e) => { state.uiLang = e.target.value; localStorage.setItem("linguavox-uilang", state.uiLang); applyLanguage(); });
   const langBy = (code) => LANGS.find(l => l.c === code) || LANGS[0];
+  
   function setStatus(text, isError = false) { statusMsg.innerHTML = text; statusMsg.className = `status-msg ${isError ? 'error' : ''}`; }
   function updateCounts() { srcCount.textContent = `${srcText.value.length} ${t('chars')}`; outCount.textContent = `${outText.value.length} ${t('chars')}`; }
+  
   speedSlider.value = state.speed; speedValue.textContent = state.speed.toFixed(1) + "x";
   speedSlider.addEventListener("input", (e) => { state.speed = parseFloat(e.target.value); speedValue.textContent = state.speed.toFixed(1) + "x"; localStorage.setItem("linguavox-speed", state.speed); });
+  
   profileBtns.forEach(btn => {
     if (btn.dataset.profile === state.audioProfile) btn.classList.add("active"); else btn.classList.remove("active");
     btn.onclick = () => { state.audioProfile = btn.dataset.profile; profileBtns.forEach(b => b.classList.remove("active")); btn.classList.add("active"); localStorage.setItem("linguavox-audio-profile", state.audioProfile); };
   });
+  
   function renderDropdowns() {
     fromDropdown.innerHTML = ""; toDropdown.innerHTML = "";
     LANGS.forEach(l => {
@@ -193,12 +240,15 @@
       divT.onclick = () => { state.to = l.c; updateLangUI(); toDropdown.classList.remove("active"); if (srcText.value.trim()) doTranslate(); }; toDropdown.appendChild(divT);
     });
   }
+  
   function updateLangUI() {
     const lFrom = langBy(state.from); const lTo = langBy(state.to);
     fromFlag.textContent = lFrom.f; fromName.textContent = lFrom.n; fromChip.textContent = lFrom.n;
-    toFlag.textContent = lTo.f; toName.textContent = lTo.n; toChip.textContent = lTo.n + " 100%";
+    toFlag.textContent = lTo.f; toName.textContent = lTo.n; 
+    toChip.textContent = lTo.n + " " + t('detected');
     renderDropdowns(); localStorage.setItem("linguavox-from", state.from); localStorage.setItem("linguavox-to", state.to);
   }
+  
   document.getElementById("fromBtn").onclick = (e) => { e.stopPropagation(); fromDropdown.classList.toggle("active"); toDropdown.classList.remove("active"); historyPanel.classList.remove("active"); };
   document.getElementById("toBtn").onclick = (e) => { e.stopPropagation(); toDropdown.classList.toggle("active"); fromDropdown.classList.remove("active"); historyPanel.classList.remove("active"); };
   document.addEventListener("click", (e) => { if (!e.target.closest('#fromContainer') && !e.target.closest('#toContainer')) { fromDropdown.classList.remove("active"); toDropdown.classList.remove("active"); } if (!e.target.closest('#histBtn') && !e.target.closest('#historyPanel')) { historyPanel.classList.remove("active"); } });
@@ -213,7 +263,6 @@
     const res = await fetch(url); if (!res.ok) throw new Error("MyMemory API Error"); const data = await res.json(); if (data.responseData && data.responseData.translatedText) return data.responseData.translatedText; throw new Error("Tradução vazia");
   }
 
-  // LINGVA COM 4 INSTÂNCIAS - ALTA DISPONIBILIDADE
   const LINGVA_INSTANCES = [
     "https://lingva.ml/api/v1",
     "https://lingva.garudalinux.org/api/v1",
@@ -225,7 +274,7 @@
     for (const base of LINGVA_INSTANCES) {
       try {
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 4000);
+        const timeout = setTimeout(() => controller.abort(), 2000);
         const url = `${base}/${from}/${to}/${encodeURIComponent(text)}`;
         const res = await fetch(url, { signal: controller.signal });
         clearTimeout(timeout);
@@ -260,6 +309,7 @@
   srcText.addEventListener("keydown", (e) => { if ((e.ctrlKey || e.metaKey) && e.key === "Enter") doTranslate(); });
   document.getElementById("clearBtn").onclick = () => { srcText.value = ""; outText.value = ""; updateCounts(); setStatus(""); srcText.focus(); };
   document.getElementById("copyBtn").onclick = async () => { if (!outText.value) return; try { await navigator.clipboard.writeText(outText.value); setStatus(t('statusCopied')); setTimeout(() => setStatus(""), 2000); } catch (e) { outText.select(); document.execCommand("copy"); setStatus(t('statusCopied')); setTimeout(() => setStatus(""), 2000); } };
+  
   function getBestVoice(langCode, profile) {
     const voices = speechSynthesis.getVoices(); let targetLocales = specialLocales[langCode] || [localeMap[langCode] || langCode]; let available = [];
     for (let code of targetLocales) { available = voices.filter(v => v.lang.toLowerCase().replace('_', '-') === code.toLowerCase()); if (available.length > 0) break; }
@@ -270,6 +320,7 @@
     if (!bestVoice) { bestVoice = available.find(v => premiumKeywords.some(p => v.name.toLowerCase().includes(p))); }
     return bestVoice || available[0];
   }
+  
   function speak(text, langCode) {
     if (!text.trim()) return; if (!("speechSynthesis" in window)) { setStatus(t('statusError'), true); return; }
     speechSynthesis.cancel(); const utterance = new SpeechSynthesisUtterance(text); let finalLang = (specialLocales[langCode] && specialLocales[langCode][0]) || localeMap[langCode] || langCode; utterance.lang = finalLang;
@@ -277,16 +328,20 @@
     if (state.audioProfile === 'grave') { utterance.pitch = 0.8; } else { utterance.pitch = 1.05; }
     utterance.rate = state.speed; speechSynthesis.speak(utterance); setStatus("🔊 ..."); utterance.onend = () => setStatus(""); utterance.onerror = (e) => { setStatus(t('statusError'), true); setTimeout(() => setStatus(""), 3000); };
   }
+  
   document.getElementById("speakSrcBtn").onclick = () => speak(srcText.value, state.from); document.getElementById("speakOutBtn").onclick = () => speak(outText.value, state.to);
+  
   function updateHistoryUI() {
     histCount.textContent = state.history.length; historyList.innerHTML = "";
     if (state.history.length === 0) { historyList.innerHTML = `<div style="text-align:center; font-size:12px; color:var(--text-muted); padding:10px;">${t('noHistory')}</div>`; return; }
     state.history.forEach((item) => { const div = document.createElement("div"); div.className = "history-item"; div.innerHTML = `<strong>${item.src}</strong><span>${item.out}</span>`; div.onclick = () => { srcText.value = item.src; outText.value = item.out; updateCounts(); historyPanel.classList.remove("active"); setStatus(t('statusRecovered')); setTimeout(() => setStatus(""), 2000); }; historyList.appendChild(div); });
   }
+  
   document.getElementById("histBtn").onclick = (e) => { e.stopPropagation(); historyPanel.classList.toggle("active"); fromDropdown.classList.remove("active"); toDropdown.classList.remove("active"); };
   document.getElementById("clearHistBtn").onclick = (e) => { e.stopPropagation(); state.history = []; localStorage.removeItem("linguavox-h"); updateHistoryUI(); setStatus(t('statusCleared'), false); setTimeout(() => setStatus(""), 2000); };
   const overlay = document.getElementById("overlay"); document.getElementById("subBtn").onclick = () => { if (!outText.value) { setStatus(t('srcPlaceholder'), true); return; } document.getElementById("ovSrc").textContent = srcText.value; document.getElementById("ovOut").textContent = outText.value; overlay.classList.add("active"); };
   document.getElementById("ovClose").onclick = () => overlay.classList.remove("active"); document.getElementById("ovPlay").onclick = () => speak(outText.value, state.to); overlay.onclick = (e) => { if (e.target === overlay) overlay.classList.remove("active"); };
+  
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition; let recognition = null; let isListening = false;
   if (SpeechRecognition) {
     recognition = new SpeechRecognition(); recognition.continuous = false; recognition.interimResults = false;
@@ -296,8 +351,9 @@
     recognition.onend = () => { isListening = false; micBtn.classList.remove("listening"); if (statusMsg.textContent === t('statusListening')) { setStatus(""); } };
   }
   micBtn.onclick = () => { if (!recognition) { setStatus(t('statusMicUnsupported'), true); return; } if (isListening) { recognition.stop(); } else { let recLang = (specialLocales[state.from] && specialLocales[state.from][0]) || localeMap[state.from] || state.from; recognition.lang = recLang; try { recognition.start(); } catch(e) { recognition.stop(); } } };
+  
   function init() { applyLanguage(); updateLangUI(); updateHistoryUI(); const savedSrc = localStorage.getItem("linguavox-src"); const savedOut = localStorage.getItem("linguavox-out"); if (savedSrc) srcText.value = savedSrc; if (savedOut) outText.value = savedOut; updateCounts(); if ("speechSynthesis" in window) { speechSynthesis.getVoices(); setTimeout(() => speechSynthesis.getVoices(), 500); } }
   init();
 </script>
-<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
+</body>
 </html>
